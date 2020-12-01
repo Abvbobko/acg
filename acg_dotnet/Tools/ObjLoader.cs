@@ -7,6 +7,7 @@ using System.IO;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
 using acg_dotnet.Tools.Transformations;
+using System.Globalization;
 
 namespace acg_dotnet.Tools
 {
@@ -45,8 +46,8 @@ namespace acg_dotnet.Tools
                     switch (values[0]) {
                         case "v": 
                             List<double> vertex = new List<double>();
-                            for (int i = 1; i < values.Length; i++) {
-                                vertex.Add(double.Parse(values[i]));
+                            for (int i = 1; i < values.Length; i++) {                                                                                                                             
+                                vertex.Add(double.Parse(values[i], CultureInfo.InvariantCulture));
                             }
                             if (vertex.Count < 4) {
                                 vertex.Add(1);
@@ -57,14 +58,14 @@ namespace acg_dotnet.Tools
                         case "vt":                            
                             vertex = new List<double>();
                             for (int i = 2; i < values.Length; i++) {
-                                vertex.Add(double.Parse(values[i]));
+                                vertex.Add(double.Parse(values[i], CultureInfo.InvariantCulture));
                             }
                             vertex_textures.Add(vertex);
                             break;
                         case "vn":                            
                             vertex = new List<double>();
                             for (int i = 2; i < values.Length; i++) {
-                                vertex.Add(double.Parse(values[i]));
+                                vertex.Add(double.Parse(values[i], CultureInfo.InvariantCulture));
                             }
                             vertex_normals.Add(vertex);
                             break;
@@ -138,10 +139,8 @@ namespace acg_dotnet.Tools
                 }
                 
             }
-
+                   
         }
-
-        
 
         public Matrix<double> Vertices {
             get {                

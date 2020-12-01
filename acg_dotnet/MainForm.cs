@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using acg_dotnet.Tools;
 
 
 namespace acg_dotnet
@@ -32,6 +33,9 @@ namespace acg_dotnet
 
             // Draws the line 
             pea.Graphics.DrawLine(pen, pt1, pt2);
+
+            ObjLoader o = new ObjLoader();
+            o.Load("C:\\Users\\hp\\Desktop\\acg_dotnet\\acg_dotnet\\data\\head\\Model.obj");
         }
 
     }
