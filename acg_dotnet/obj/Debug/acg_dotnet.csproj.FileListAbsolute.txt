@@ -1,0 +1,13 @@
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\bin\Debug\acg_dotnet.exe.config
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\bin\Debug\acg_dotnet.exe
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\bin\Debug\acg_dotnet.pdb
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\obj\Debug\acg_dotnet.csprojAssemblyReference.cache
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\obj\Debug\acg_dotnet.Properties.Resources.resources
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\obj\Debug\acg_dotnet.csproj.GenerateResource.cache
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\obj\Debug\acg_dotnet.csproj.CoreCompileInputs.cache
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\obj\Debug\acg_dotnet.exe
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\obj\Debug\acg_dotnet.pdb
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\obj\Debug\acg_dotnet.MainForm.resources
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\bin\Debug\MathNet.Numerics.dll
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\bin\Debug\MathNet.Numerics.xml
+C:\Users\hp\Desktop\acg_dotnet\acg_dotnet\obj\Debug\acg_dotnet.csproj.CopyComplete
