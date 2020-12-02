@@ -23,9 +23,9 @@ namespace acg_dotnet.Tools
         public const int WIN_WIDTH = 1000;
         public const int WIN_HEIGHT = 600;
 
-        //EYE = np.array([0, 0, 300]);
-        //TARGET = np.array([0, 0, 0]);
-        //UP = np.array([0, 1, 0]);
+        public static readonly double[] EYE = { 0, 0, 300 };
+        public static readonly double[] TARGET = { 0, 0, 0 };
+        public static readonly double[] UP = { 0, 1, 0 };      
 
         public const int O_TO_P_WIDTH = WIN_WIDTH;
         public const int O_TO_P_HEIGHT = WIN_HEIGHT;
@@ -62,5 +62,20 @@ namespace acg_dotnet.Tools
         public const int SCALE_UP_SPEED = 2;
         public const double SCALE_DOWN_SPEED = 1.0 / SCALE_UP_SPEED;
 
+        public static Matrix<double> W_TO_O = TransformationMatrices.WorldToObserver(EYE, TARGET, UP);
+        public static Matrix<double> O_TO_P = TransformationMatrices.orthographicMatrix(
+            O_TO_P_HEIGHT, O_TO_P_WIDTH, Z_NEAR, Z_FAR
+        );
+
+        public static Matrix<double> O_TO_P_PERSPECTIVE = TransformationMatrices.perspectiveMatrix(
+            O_TO_P_HEIGHT, O_TO_P_WIDTH, Z_NEAR, Z_FAR
+        );
+
+        public static Matrix<double> P_TO_V = TransformationMatrices.viewportMatrix(
+            P_TO_V_HEIGHT, P_TO_V_WIDTH, X_MIN, Y_MIN
+        );
+
+        public static Matrix<double> W_TO_V = P_TO_V.Multiply(O_TO_P).Multiply(W_TO_O);
+       
     }
 }

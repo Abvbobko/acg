@@ -11,8 +11,7 @@ using acg_dotnet.Tools;
 
 namespace acg_dotnet
 {
-    class Model
-    {
+    class Model {
 
         ObjLoader objLoader;
         Matrix<double> vertices;
@@ -22,7 +21,7 @@ namespace acg_dotnet
         bool projection_type = true; // true - ortographic / false - perspective
 
 
-        Model() {
+        public Model() {
             objLoader = new ObjLoader();
             SetModel(Constants.DEFAULT_PATH);
         }
@@ -38,8 +37,8 @@ namespace acg_dotnet
             rotate_matrix = TransformationMatrices.GetEye4();
         }
 
-        public Matrix<double> LoadModel(string path) {            
-            objLoader.Load(path);            
+        public Matrix<double> LoadModel(string path) {
+            objLoader.Load(path);
             return objLoader.Vertices;
         }
 
@@ -80,5 +79,17 @@ namespace acg_dotnet
             projection_type = !projection_type;
         }
 
+        public Matrix<double> TransformCoordinates() {
+            return Constants.W_TO_V.Multiply(moving_matrix
+                ).Multiply(rotate_matrix
+                ).Multiply(scale_matrix
+                ).Multiply(vertices);
+        }
+
+        public List<List<int>> FacesV {
+            get {
+                return objLoader.FacesV;
+            }
+        }
     }
 }

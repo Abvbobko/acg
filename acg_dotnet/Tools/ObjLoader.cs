@@ -160,21 +160,21 @@ namespace acg_dotnet.Tools
             }
         }
 
-        public Matrix<double> FacesV {
+        public List<List<int>> FacesV {
             get {
-                return DenseMatrix.OfArray(TransformationMatrices.ListToArray<int>(faces_v));
+                return faces_v;//DenseMatrix.OfArray(TransformationMatrices.ListToArray<int>(faces_v));
             }
         }
 
-        public Matrix<double> FacesVn {
+        public List<List<int>> FacesVn {
             get {
-                return DenseMatrix.OfArray(TransformationMatrices.ListToArray<int>(faces_vn));
+                return faces_vn;//DenseMatrix.OfArray(TransformationMatrices.ListToArray<int>(faces_vn));
             }
         }
 
-        public Matrix<double> FacesVt {
+        public List<List<int>> FacesVt {
             get {
-                return DenseMatrix.OfArray(TransformationMatrices.ListToArray<int>(faces_vt));
+                return faces_vt;//DenseMatrix.OfArray(TransformationMatrices.ListToArray<int>(faces_vt));
             }
         }
 

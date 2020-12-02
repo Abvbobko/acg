@@ -8,25 +8,45 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using acg_dotnet.Tools;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
 
 
 namespace acg_dotnet
 {
     public partial class MainForm : Form
     {
+        Model model;
+
         public MainForm() {
             InitializeComponent();
-
-            //Model model = new Model();
             
+            Size = new Size(Constants.WIN_WIDTH, Constants.WIN_HEIGHT);
+            model = new Model();
         }
 
 
 
 
         protected override void OnPaint(PaintEventArgs pea) {
+            DrawModel(pea);                     
+        }
+
+        private void DrawModel(PaintEventArgs pea) {
+
             // Defines pen 
             Pen pen = new Pen(ForeColor);
+
+            Matrix<double> vertices = model.TransformCoordinates();
+            List<List<int>> faces = model.FacesV;
+
+            for (int face_indx = 0; face_indx < faces.Count; face_indx++) {
+
+            }
+
+
+
+           
 
             // Defines the both points to connect 
             // pt1 is (30.0, 30.0) which represents (x1, y1) 
@@ -37,7 +57,6 @@ namespace acg_dotnet
 
             // Draws the line 
             pea.Graphics.DrawLine(pen, pt1, pt2);
-                        
         }
 
     }
