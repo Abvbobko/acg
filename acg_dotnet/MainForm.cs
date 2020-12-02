@@ -17,7 +17,11 @@ namespace acg_dotnet
         public MainForm() {
             InitializeComponent();
 
+            //Model model = new Model();
+            
         }
+
+
 
 
         protected override void OnPaint(PaintEventArgs pea) {
@@ -33,9 +37,7 @@ namespace acg_dotnet
 
             // Draws the line 
             pea.Graphics.DrawLine(pen, pt1, pt2);
-
-            ObjLoader o = new ObjLoader();
-            o.Load("C:\\Users\\hp\\Desktop\\acg_dotnet\\acg_dotnet\\data\\head\\Model.obj");
+                        
         }
 
     }

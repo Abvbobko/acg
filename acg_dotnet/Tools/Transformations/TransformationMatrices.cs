@@ -19,6 +19,16 @@ namespace acg_dotnet.Tools.Transformations
     }
 
     static class TransformationMatrices {
+
+        public static Matrix<double> GetEye4() {
+            return DenseMatrix.OfArray(new double[,] {
+                { 1, 0, 0, 0},
+                { 0, 1, 0, 0 },
+                { 0, 0, 1, 0 },
+                { 0, 0, 0, 1 }
+            });
+        }
+
         public static double[,] ListToArray<T>(List<List<double>> vertex_list) {
             double[,] vertices_matrix = new double[vertex_list.Count, vertex_list[0].Count];
             for (int i = 0; i < vertex_list.Count; i++) {
