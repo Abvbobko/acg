@@ -19,6 +19,7 @@ namespace acg_dotnet
         Matrix<double> moving_matrix;
         Matrix<double> scale_matrix;
         Matrix<double> rotate_matrix;
+        bool projection_type = true; // true - ortographic / false - perspective
 
 
         Model() {
@@ -48,9 +49,35 @@ namespace acg_dotnet
             );
         }
 
-        public void RotateFigure(Matrix<double> rotate_matrix, bool direction = true) {
+        public delegate Matrix<double> RotateMatrix(double speed);
+
+        public void RotateFigure(RotateMatrix rotation_matrix, bool direction = true) {
             // true - clockwise
             // false - counterclockwise
+
+            double rotate_speed = Constants.ROTATE_SPEED;
+            if (!direction) {
+                rotate_speed = -rotate_speed;
+            }
+            rotate_matrix = rotate_matrix.Multiply(rotation_matrix(rotate_speed));
+        }
+
+        public void ScaleFigure(int angle) {
+            // wheelEvent in the python version
+            double speed = 0;
+            if (angle > 0) {
+                speed = Constants.SCALE_UP_SPEED;
+            }
+            else if (angle < 0) {
+                speed = -Constants.SCALE_DOWN_SPEED;
+            }
+            if (speed != 0) {
+                scale_matrix = TransformationMatrices.ScaleMatrix(new Point(speed, speed, speed)).Multiply(scale_matrix);
+            }
+        }
+
+        public void ChangeProjection() {
+            projection_type = !projection_type;
         }
 
     }
