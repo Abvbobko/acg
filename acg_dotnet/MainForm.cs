@@ -49,8 +49,8 @@ namespace acg_dotnet
 
                     x2 = vertices.At(0, face[i] - 1);
                     y2 = vertices.At(1, face[i] - 1);
-                    pea.Graphics.DrawLine(pen, new Point(Convert.ToInt32(x1), Convert.ToInt32(y1)), new Point(Convert.ToInt32(x2), Convert.ToInt32(y2)));
-                    //DDA_Line(pea, brush, x1, x2, y1, y2);
+                    //pea.Graphics.DrawLine(pen, new Point(Convert.ToInt32(x1), Convert.ToInt32(y1)), new Point(Convert.ToInt32(x2), Convert.ToInt32(y2)));
+                    DDA_Line(pea, brush, x1, x2, y1, y2);
                 }         
                 x1 = vertices.At(0, face[0] - 1);
                 y1 = vertices.At(1, face[0] - 1);
@@ -58,8 +58,8 @@ namespace acg_dotnet
                 x2 = vertices.At(0, face.Last() - 1);
                 y2 = vertices.At(1, face.Last() - 1);
 
-                pea.Graphics.DrawLine(pen, new Point(Convert.ToInt32(x1), Convert.ToInt32(y1)), new Point(Convert.ToInt32(x2), Convert.ToInt32(y2)));
-                //DDA_Line(pea, brush, x1, x2, y1, y2);                
+                //pea.Graphics.DrawLine(pen, new Point(Convert.ToInt32(x1), Convert.ToInt32(y1)), new Point(Convert.ToInt32(x2), Convert.ToInt32(y2)));
+                DDA_Line(pea, brush, x1, x2, y1, y2);                
             }
         
         }
@@ -84,10 +84,8 @@ namespace acg_dotnet
 
             x.Add(x2);
             y.Add(y2);
-            for (int j = 0; j < x.Count; j++) {
-                Console.WriteLine(x[j]);
-            }
-            while (i <= L) {
+            i = 0;
+            while (i <= L) {                                
                 //Console.WriteLine(x[i].ToString() + " " + y[i].ToString());
                 pea.Graphics.FillRectangle(brush, Convert.ToSingle(x[i]), Convert.ToSingle(y[i]), 1, 1);
                 i += 1;
