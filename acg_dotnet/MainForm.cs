@@ -131,6 +131,20 @@ namespace acg_dotnet
                 case Constants.CHANGE_PROJECTION_BUTTON:
                     model.ChangeProjection();
                     break;
+                case Constants.OPEN_FILE_BUTTON:
+                    
+                    var file_path = string.Empty;
+                    using (OpenFileDialog openFileDialog = new OpenFileDialog()) {
+                        openFileDialog.InitialDirectory = "C:\\Users\\hp\\Desktop";
+                        openFileDialog.Filter = "obj files (*.obj)|*.obj|All files (*.*)|*.*";                        
+                        openFileDialog.RestoreDirectory = true;
+
+                        if (openFileDialog.ShowDialog() == DialogResult.OK) {                            
+                            file_path = openFileDialog.FileName;
+                            model.SetModel(file_path);                            
+                        }
+                    }
+                    break;
                 default:
                     return;                                    
             }

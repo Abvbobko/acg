@@ -83,5 +83,6 @@ namespace acg_dotnet.Tools
         public const Keys Z_ROTATE_BUTTON = Keys.Z;
 
         public const Keys CHANGE_PROJECTION_BUTTON = Keys.P;
+        public const Keys OPEN_FILE_BUTTON = Keys.O;
     }
 }
