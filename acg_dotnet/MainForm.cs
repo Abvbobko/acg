@@ -8,12 +8,23 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using acg_dotnet.Tools;
+using acg_dotnet.Tools.Transformations;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
 
 
 namespace acg_dotnet
 {
+    struct Point
+    {
+        public double x, y, z;
+        public Point(double x, double y, double z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+    }
+
     public partial class MainForm : Form
     {
         Model model;
@@ -24,9 +35,6 @@ namespace acg_dotnet
             Size = new Size(Constants.WIN_WIDTH, Constants.WIN_HEIGHT);
             model = new Model();
         }
-
-
-
 
         protected override void OnPaint(PaintEventArgs pea) {
             DrawModel(pea);                     
@@ -90,6 +98,46 @@ namespace acg_dotnet
                 pea.Graphics.FillRectangle(brush, Convert.ToSingle(x[i]), Convert.ToSingle(y[i]), 1, 1);
                 i += 1;
             }            
+        }
+
+        private void MainForm_KeyDown(object sender, KeyEventArgs e) {            
+            bool shift = false;
+            if (e.Shift) {
+                shift = true;
+            }
+
+            switch (e.KeyCode) {
+                case Constants.LEFT_BUTTON:                    
+                    model.MoveFigure(new Point(-Constants.SPEED, 0, 0));
+                    break;
+                case Constants.RIGHT_BUTTON:
+                    model.MoveFigure(new Point(Constants.SPEED, 0, 0));
+                    break;
+                case Constants.UP_BUTTON:
+                    model.MoveFigure(new Point(0, Constants.SPEED, 0));
+                    break;
+                case Constants.DOWN_BUTTON:
+                    model.MoveFigure(new Point(0, -Constants.SPEED, 0));
+                    break;
+                case Constants.X_ROTATE_BUTTON:                    
+                    model.RotateFigure(TransformationMatrices.XRotationMatrix, shift);
+                    break;
+                case Constants.Y_ROTATE_BUTTON:
+                    model.RotateFigure(TransformationMatrices.YRotationMatrix, shift);
+                    break;
+                case Constants.Z_ROTATE_BUTTON:
+                    model.RotateFigure(TransformationMatrices.ZRotationMatrix, shift);
+                    break;
+                default:
+                    return;                                    
+            }
+            Refresh();
+        }
+
+        private void MainForm_MouseWheel(object sender, MouseEventArgs e) {            
+            int angle = e.Delta;
+            model.ScaleFigure(angle);
+            Refresh();
         }
 
     }

@@ -8,7 +8,7 @@ using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace acg_dotnet.Tools.Transformations
 {
-    struct Point
+    /*struct Point
     {
         public double x, y, z;
         public Point(double x, double y, double z) {
@@ -16,7 +16,7 @@ namespace acg_dotnet.Tools.Transformations
             this.y = y;
             this.z = z;
         }
-    }
+    }*/
 
     static class TransformationMatrices {
 

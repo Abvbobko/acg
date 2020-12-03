@@ -35,6 +35,8 @@
             this.DoubleBuffered = true;
             this.Name = "MainForm";
             this.Text = "ACG";
+            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseWheel);            
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.ResumeLayout(false);
 
         }

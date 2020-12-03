@@ -48,9 +48,9 @@ namespace acg_dotnet
             );
         }
 
-        public delegate Matrix<double> RotateMatrix(double speed);
+        public delegate Matrix<double> RotateMatrix(double theta);
 
-        public void RotateFigure(RotateMatrix rotation_matrix, bool direction = true) {
+        public void RotateFigure(RotateMatrix rotation_matrix, bool direction = false) {
             // true - clockwise
             // false - counterclockwise
 

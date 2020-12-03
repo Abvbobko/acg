@@ -7,6 +7,7 @@ using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
 using acg_dotnet.Tools.Transformations;
 using acg_dotnet.Tools;
+using System.Windows.Forms;
 
 
 namespace acg_dotnet.Tools
@@ -76,6 +77,18 @@ namespace acg_dotnet.Tools
         );
 
         public static Matrix<double> W_TO_V = P_TO_V.Multiply(O_TO_P).Multiply(W_TO_O);
+
+
+        // keys
+        public const Keys LEFT_BUTTON = Keys.A;
+        public const Keys RIGHT_BUTTON = Keys.D;
+        public const Keys UP_BUTTON = Keys.W;
+        public const Keys DOWN_BUTTON = Keys.S;
+
+        public const Keys X_ROTATE_BUTTON = Keys.X;
+        public const Keys Y_ROTATE_BUTTON = Keys.Y;
+        public const Keys Z_ROTATE_BUTTON = Keys.Z;
        
+
     }
 }
