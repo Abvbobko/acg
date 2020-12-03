@@ -68,7 +68,7 @@ namespace acg_dotnet
                 speed = Constants.SCALE_UP_SPEED;
             }
             else if (angle < 0) {
-                speed = -Constants.SCALE_DOWN_SPEED;
+                speed = Constants.SCALE_DOWN_SPEED;
             }
             if (speed != 0) {
                 scale_matrix = TransformationMatrices.ScaleMatrix(new Point(speed, speed, speed)).Multiply(scale_matrix);
