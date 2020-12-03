@@ -32,7 +32,7 @@ namespace acg_dotnet
         public MainForm() {
             InitializeComponent();
             
-            Size = new Size(Constants.WIN_WIDTH, Constants.WIN_HEIGHT);
+            //Size = new Size(Constants.WIN_WIDTH, Constants.WIN_HEIGHT);
             model = new Model();
         }
 
@@ -127,6 +127,9 @@ namespace acg_dotnet
                     break;
                 case Constants.Z_ROTATE_BUTTON:
                     model.RotateFigure(TransformationMatrices.ZRotationMatrix, shift);
+                    break;
+                case Constants.CHANGE_PROJECTION_BUTTON:
+                    model.ChangeProjection();
                     break;
                 default:
                     return;                                    

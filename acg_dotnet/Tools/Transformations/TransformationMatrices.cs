@@ -254,7 +254,7 @@ namespace acg_dotnet.Tools.Transformations
             );
         }
 
-        public static Matrix<double> perspectiveMatrix(int width, int height, int z_near, int z_far) {
+        public static Matrix<double> perspectiveMatrix(int width, int height, int z_near, int z_far, double FOV = Math.PI / 4, double aspect = Constants.WIN_WIDTH/Constants.WIN_HEIGHT) {
             /*
                 Матрица преобразует векторы из пространства наблюдателя
                 в пространство перспективной проекции    
@@ -266,7 +266,7 @@ namespace acg_dotnet.Tools.Transformations
 
             */
 
-            Matrix<double> tmp_matrix = DenseMatrix.OfArray(new double[,] {
+            /* Matrix<double> tmp_matrix = DenseMatrix.OfArray(new double[,] {
                 { 0, 0, 0, 0 },
                 { 0, 0, 0, 0 },
                 { 0, 0, 0, 0 },
@@ -278,7 +278,14 @@ namespace acg_dotnet.Tools.Transformations
                 new Point(0, 2.0 * z_near / height, 0),
                 new Point(0, 0, 1.0*z_far / (z_near - z_far)),
                 new Point(0, 0, 1.0 * z_near * z_far / (z_near - z_far))
-            ) - tmp_matrix;
+            ) - tmp_matrix;*/
+            double[,] matrix = new double[,] {
+                { 1/(aspect*Math.Tan(FOV/2)), 0, 0, 0 },
+                { 0, 1/(Math.Tan(FOV/2)) , 0, 0 },
+                { 0, 0, 1.0*z_far / (z_near - z_far), 1.0 * z_near * z_far / (z_near - z_far) },
+                { 0, 0, -1, 0 }
+            };
+            return DenseMatrix.OfArray(matrix);
         }
 
         //projection to viewport

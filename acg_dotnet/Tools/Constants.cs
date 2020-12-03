@@ -21,7 +21,7 @@ namespace acg_dotnet.Tools
 
 
         public const string DEFAULT_PATH = "C:\\Users\\hp\\Desktop\\acg_dotnet\\acg_dotnet\\data\\head\\Model.obj";
-        public const int WIN_WIDTH = 1000;
+        public const int WIN_WIDTH = 800;
         public const int WIN_HEIGHT = 600;
 
         public static readonly double[] EYE = { 0, 0, 300 };
@@ -35,8 +35,8 @@ namespace acg_dotnet.Tools
 
         public const int P_TO_V_WIDTH = WIN_WIDTH;
         public const int P_TO_V_HEIGHT = WIN_HEIGHT;
-        public const int X_MIN = 0;
-        public const int Y_MIN = 0;
+        public const int X_MIN = 100;
+        public const int Y_MIN = -100;
 
         public const int SPEED = 5;
 
@@ -48,19 +48,11 @@ namespace acg_dotnet.Tools
         public const int INCREASE_SPEED = SPEED;
         public const int DECREASE_SPEED = SPEED;
 
-        //LEFT_BUTTON = [Qt.Key_A, Qt.Key_Left]
-        //RIGHT_BUTTON = [Qt.Key_D, Qt.Key_Right]
-        //UP_BUTTON = [Qt.Key_W, Qt.Key_Up]
-        //DOWN_BUTTON = [Qt.Key_S, Qt.Key_Down]
-
-        //X_ROTATE_BUTTON = [Qt.Key_X]
-        //Y_ROTATE_BUTTON = [Qt.Key_Y]
-        //Z_ROTATE_BUTTON = [Qt.Key_Z]
         public const double ROTATE_SPEED = 0.1;
 
         public static Matrix<double> INIT_MODEL_TO_WORLD_MATRIX = TransformationMatrices.ScaleMatrix(new Point(250, 250, 250));
 
-        public const int SCALE_UP_SPEED = 2;
+        public const double SCALE_UP_SPEED = 1.2;
         public const double SCALE_DOWN_SPEED = 1.0 / SCALE_UP_SPEED;
 
         public static Matrix<double> W_TO_O = TransformationMatrices.WorldToObserver(EYE, TARGET, UP);
@@ -77,6 +69,7 @@ namespace acg_dotnet.Tools
         );
 
         public static Matrix<double> W_TO_V = P_TO_V.Multiply(O_TO_P).Multiply(W_TO_O);
+        public static Matrix<double> W_TO_V_perspective = P_TO_V.Multiply(O_TO_P_PERSPECTIVE).Multiply(W_TO_O);
 
 
         // keys
@@ -88,7 +81,7 @@ namespace acg_dotnet.Tools
         public const Keys X_ROTATE_BUTTON = Keys.X;
         public const Keys Y_ROTATE_BUTTON = Keys.Y;
         public const Keys Z_ROTATE_BUTTON = Keys.Z;
-       
 
+        public const Keys CHANGE_PROJECTION_BUTTON = Keys.P;
     }
 }

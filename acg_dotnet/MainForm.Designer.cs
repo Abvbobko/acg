@@ -1,4 +1,6 @@
-﻿namespace acg_dotnet
+﻿using acg_dotnet.Tools;
+
+namespace acg_dotnet
 {
     partial class MainForm
     {
@@ -31,12 +33,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.ClientSize = new System.Drawing.Size(Constants.WIN_WIDTH, Constants.WIN_HEIGHT);
             this.DoubleBuffered = true;
             this.Name = "MainForm";
-            this.Text = "ACG";
-            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseWheel);            
+            this.Text = "ACG";            
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
+            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseWheel);
             this.ResumeLayout(false);
 
         }

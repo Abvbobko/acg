@@ -80,10 +80,25 @@ namespace acg_dotnet
         }
 
         public Matrix<double> TransformCoordinates() {
-            return Constants.W_TO_V.Multiply(moving_matrix
-                ).Multiply(rotate_matrix
-                ).Multiply(scale_matrix
-                ).Multiply(vertices);
+            if (projection_type) {
+                return Constants.W_TO_V.Multiply(moving_matrix
+                    ).Multiply(rotate_matrix
+                    ).Multiply(scale_matrix
+                    ).Multiply(vertices);
+            }
+            
+            Matrix<double> perspective = Constants.W_TO_V_perspective.Multiply(moving_matrix
+              ).Multiply(rotate_matrix
+              ).Multiply(scale_matrix
+              ).Multiply(vertices);            
+
+            for (int i = 0; i < perspective.RowCount; i++) {
+                for (int j = 0; j < perspective.ColumnCount; j++) {
+                    perspective[i, j] /= 1.0* perspective[perspective.RowCount - 1, j];
+                }
+            }            
+
+            return perspective;
         }
 
         public List<List<int>> FacesV {
