@@ -66,6 +66,19 @@ namespace acg_dotnet
                 x2 = vertices.At(0, face.Last() - 1);
                 y2 = vertices.At(1, face.Last() - 1);
 
+                Brush brush1 = Brushes.Green;
+
+                double x1_ = vertices.At(0, face[0] - 1), y1_ = vertices.At(1, face[0] - 1);
+                double x2_ = vertices.At(0, face[1] - 1), y2_ = vertices.At(1, face[1] - 1);
+                double x3_ = vertices.At(0, face[2] - 1), y3_ = vertices.At(1, face[2] - 1);
+                NewFillPolygon(
+                    pea, 
+                    brush1,
+                    Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)),
+                    Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)),
+                    Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_))
+                );
+
                 //pea.Graphics.DrawLine(pen, new Point(Convert.ToInt32(x1), Convert.ToInt32(y1)), new Point(Convert.ToInt32(x2), Convert.ToInt32(y2)));
                 polygonPoints.AddRange(DDA_Line(x1, x2, y1, y2));
 
@@ -73,6 +86,76 @@ namespace acg_dotnet
                 DrawPoints(pea, brush, polygonPoints);
             }            
             // !!!!!!!!!!!!!! DrawPoints
+
+        }
+
+        private int[] Swap(int a, int b) {
+            return new int[] { b, a };
+        }
+
+        private void NewFillPolygon(PaintEventArgs pea, Brush brush, int x0, int y0, int x1, int y1, int x2, int y2) {
+            if (y0 > y1) {
+                int[] tmp = Swap(y0, y1);
+                y0 = tmp[0];
+                y1 = tmp[1];
+
+                tmp = Swap(x0, x1);
+                x0 = tmp[0];
+                x1 = tmp[1];
+
+            }
+
+            if (y0 > y2) {
+                int[] tmp = Swap(y0, y2);
+                y0 = tmp[0];
+                y2 = tmp[1];
+
+                tmp = Swap(x0, x2);
+                x0 = tmp[0];
+                x2 = tmp[1];
+
+            }
+
+            if (y1 > y2) {
+                int[] tmp = Swap(y1, y2);
+                y1 = tmp[0];
+                y2 = tmp[1];
+
+                tmp = Swap(x1, x2);
+                x1 = tmp[0];
+                x2 = tmp[1];
+
+            }
+            
+            int total_height = y2 - y0;
+            for (int i = 0; i < total_height; i++) {
+                bool second_half = i > y1 - y0 || y1 == y0;
+                int segment_height = second_half ? y2 - y1 : y1 - y0;
+                float alpha = (float)i / total_height;
+                float beta = (float)(i - (second_half ? y1 - y0 : 0)) / segment_height;
+                float Ax = x0 + (x2 - x0) * alpha;
+                float Ay = y0 + (y2 - y0) * alpha;
+
+                float Bx = second_half ? x1 + (x2 - x1) * beta : x0 + (x1 - x0) * beta;
+                float By = second_half ? y1 + (y2 - y1) * beta : y0 + (y1 - y0) * beta;
+
+                if (Ax > Bx) {
+                    //std::swap(A, B);
+                    float tmp = Ax;
+                    Ax = Bx;
+                    Bx = tmp;
+
+                    tmp = Ay;
+                    Ay = By;
+                    By = tmp;
+
+                }
+
+                for (int j = Convert.ToInt32(Ax); j <= Bx; j++) {
+                    pea.Graphics.FillRectangle(brush, j, y0+i, 1, 1);
+                    //image.set(j, y0 + i); // attention, due to int casts t0.y+i != A.y
+                }
+            }            
 
         }
 
@@ -100,18 +183,12 @@ namespace acg_dotnet
             }
 
             return visible_faces;
-        }
+        }   
 
         private void FillPolygon(PaintEventArgs pea, List<double[]> polygonPoints) {           
             polygonPoints = polygonPoints.OrderBy(xy => xy[1]).ToList(); // sort by y
                                                                          //polygonPoints = polygonPoints.OrderBy(xy => xy[0]).ToList(); // sort by x
-
-            Console.WriteLine("-----------------------------------");
-
-            for (int j = 0; j < polygonPoints.Count; j++) {
-                Console.WriteLine(polygonPoints[j][1].ToString() + " " + polygonPoints[j][0].ToString());
-            }
-
+               
             Brush brush = Brushes.Green;
             int i = 0;
             int first_y = 0;
