@@ -72,7 +72,7 @@ namespace acg_dotnet
         
         }
 
-        private void DDA_Line(PaintEventArgs pea, Brush brush, double x1, double x2, double y1, double y2) {            
+        private Tuple<List<double>, List<double>> DDA_Line(PaintEventArgs pea, Brush brush, double x1, double x2, double y1, double y2) {            
             double L = Math.Max(Math.Abs(x1 - x2), Math.Abs(y1 - y2));
             double dx = (x2 - x1) / L;
             double dy = (y2 - y1) / L;
@@ -97,7 +97,8 @@ namespace acg_dotnet
                 //Console.WriteLine(x[i].ToString() + " " + y[i].ToString());
                 pea.Graphics.FillRectangle(brush, Convert.ToSingle(x[i]), Convert.ToSingle(y[i]), 1, 1);
                 i += 1;
-            }            
+            }
+            return new Tuple<List<double>, List<double>>(x, y);
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e) {            
