@@ -192,12 +192,20 @@ namespace acg_dotnet.Tools.Transformations
             return c;
         }
 
-        private static double[] Arrays3CrossProduct(double[] a, double[] b) {
+        public static double[] Arrays3CrossProduct(double[] a, double[] b) {
             return new double[] {
                 a[1]*b[2] - a[2]*b[1],
                 - (a[0]*b[2] - a[2]*b[0]),
                 a[0]*b[1] - a[1]*b[0]
             };
+        }
+
+        public static double ArraysScalarProduct(double[] a, double[] b) {
+            double result = 0;
+            for (int i = 0; i < a.Length; i++) {
+                result += a[i] * b[i];
+            }
+            return result;
         }
 
         public static Matrix<double> WorldToObserver(double[] eye, double[] target, double[] up) {
