@@ -26,7 +26,9 @@ namespace acg_dotnet.Tools
 
         public static readonly double[] EYE = { 0, 0, 300 };
         public static readonly double[] TARGET = { 0, 0, 0 };
-        public static readonly double[] UP = { 0, 1, 0 };      
+        public static readonly double[] UP = { 0, 1, 0 };
+
+        public static readonly double[] LIGHT = { WIN_WIDTH, WIN_HEIGHT, -100 };
 
         public const int O_TO_P_WIDTH = WIN_WIDTH;
         public const int O_TO_P_HEIGHT = WIN_HEIGHT;

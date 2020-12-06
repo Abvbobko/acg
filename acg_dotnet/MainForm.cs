@@ -74,14 +74,21 @@ namespace acg_dotnet
                 x2 = vertices.At(0, face.Last() - 1);
                 y2 = vertices.At(1, face.Last() - 1);
                 z2 = vertices.At(2, face.Last() - 1);
-                Brush brush1 = Brushes.Green;
-
+                //Brush brush1 = Brushes.Green;
+                
                 double x1_ = vertices.At(0, face[0] - 1), y1_ = vertices.At(1, face[0] - 1), z1_ = vertices.At(2, face[0] - 1);
                 double x2_ = vertices.At(0, face[1] - 1), y2_ = vertices.At(1, face[1] - 1), z2_ = vertices.At(2, face[1] - 1);
                 double x3_ = vertices.At(0, face[2] - 1), y3_ = vertices.At(1, face[2] - 1), z3_ = vertices.At(2, face[2] - 1);
+
+                Brush polygon_brush = GetBrush(
+                    new double[] { x1_, y1_, z1_ },
+                    new double[] { x2_, y2_, z2_ },
+                    new double[] { x3_, y3_, z3_ }
+                );
+
                 FillPolygon(
-                    pea, 
-                    brush1,
+                    pea,
+                    polygon_brush,
                     Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)), Convert.ToInt32(Math.Round(z1_)),
                     Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)), Convert.ToInt32(Math.Round(z2_)),
                     Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), Convert.ToInt32(Math.Round(z3_))
@@ -96,6 +103,18 @@ namespace acg_dotnet
             }            
             // !!!!!!!!!!!!!! DrawPoints
 
+        }
+
+        private Brush GetBrush(double[] v1, double[] v2, double[] v3) {
+            double[] normal = new double[] { v1[0], v1[1], GetNormal(v1, v2, v3) };
+            normal = TransformationMatrices.NormalizeArray(normal);
+            double[] light = TransformationMatrices.NormalizeArray(Constants.LIGHT);
+            int coef = Math.Abs(Convert.ToInt32(Math.Round(255 * TransformationMatrices.ArraysScalarProduct(
+                normal,
+                TransformationMatrices.ArrayOnNumberProduct(light, -1)
+             ))));
+            Console.WriteLine(coef);
+            return new SolidBrush(Color.FromArgb(0, coef, 0));
         }
 
         private int[] Swap(int a, int b) {
@@ -204,6 +223,10 @@ namespace acg_dotnet
 
         }
 
+        private double GetNormal(double[] v1, double[] v2, double[] v3) {
+            return (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
+        }
+
         private List<List<int>> RejectFaces(List<List<int>> faces, Matrix<double> vertices) {
             List<List<int>> visible_faces = new List<List<int>>();
             foreach (List<int> face in faces) {
@@ -220,7 +243,7 @@ namespace acg_dotnet
                 double[] v2 = new double[] { x2, y2 };
                 double[] v3 = new double[] { x3, y3 };
 
-                bool sign = (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]) < 0;
+                bool sign = GetNormal(v1, v2, v3) < 0;
    
                 if (sign) {
                     visible_faces.Add(face);
