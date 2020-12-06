@@ -26,7 +26,8 @@ namespace acg_dotnet.Tools
 
         public double this[int x, int y] {
             get {
-                if ((x < width) && (y < height)) {
+                if ((x < width) && (y < height) && (x >= 0) && (y >= 0)) {
+                    //Console.WriteLine(x + " " + y + " " + width + " " + height);
                     return buffer[x, y];
                 }                
                 return double.NegativeInfinity;
