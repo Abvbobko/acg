@@ -54,7 +54,8 @@ namespace acg_dotnet
             foreach (List<int> face in faces) {
                 List<double[]> polygonPoints = new List<double[]>();
                 double x1, x2, y1, y2, z1, z2;
-                for (int i = 1; i < face.Count; i++) {
+                ///////////////// по идее можно удалить
+                /* for (int i = 1; i < face.Count; i++) {
                     x1 = vertices.At(0, face[i - 1] - 1);
                     y1 = vertices.At(1, face[i - 1] - 1);
                     z1 = vertices.At(2, face[i - 1] - 1);
@@ -64,7 +65,8 @@ namespace acg_dotnet
                     z2 = vertices.At(2, face[i] - 1);
                     //pea.Graphics.DrawLine(pen, new Point(Convert.ToInt32(x1), Convert.ToInt32(y1)), new Point(Convert.ToInt32(x2), Convert.ToInt32(y2)));
                     polygonPoints.AddRange(DDA_Line(x1, x2, y1, y2, z1, z2));
-                }
+                }*/
+                //////////////////////////////////////////
                 x1 = vertices.At(0, face[0] - 1);
                 y1 = vertices.At(1, face[0] - 1);
                 z1 = vertices.At(2, face[0] - 1);
@@ -74,22 +76,23 @@ namespace acg_dotnet
                 z2 = vertices.At(2, face.Last() - 1);
                 Brush brush1 = Brushes.Green;
 
-                double x1_ = vertices.At(0, face[0] - 1), y1_ = vertices.At(1, face[0] - 1);
-                double x2_ = vertices.At(0, face[1] - 1), y2_ = vertices.At(1, face[1] - 1);
-                double x3_ = vertices.At(0, face[2] - 1), y3_ = vertices.At(1, face[2] - 1);
+                double x1_ = vertices.At(0, face[0] - 1), y1_ = vertices.At(1, face[0] - 1), z1_ = vertices.At(2, face[0] - 1);
+                double x2_ = vertices.At(0, face[1] - 1), y2_ = vertices.At(1, face[1] - 1), z2_ = vertices.At(2, face[1] - 1);
+                double x3_ = vertices.At(0, face[2] - 1), y3_ = vertices.At(1, face[2] - 1), z3_ = vertices.At(2, face[2] - 1);
                 FillPolygon(
                     pea, 
                     brush1,
-                    Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)),
-                    Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)),
-                    Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_))
+                    Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)), Convert.ToInt32(Math.Round(z1_)),
+                    Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)), Convert.ToInt32(Math.Round(z2_)),
+                    Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), Convert.ToInt32(Math.Round(z3_))
                 );
 
                 //pea.Graphics.DrawLine(pen, new Point(Convert.ToInt32(x1), Convert.ToInt32(y1)), new Point(Convert.ToInt32(x2), Convert.ToInt32(y2)));
-                polygonPoints.AddRange(DDA_Line(x1, x2, y1, y2, z1, z2));
+                //polygonPoints.AddRange(DDA_Line(x1, x2, y1, y2, z1, z2));
 
                 //FillPolygon(pea, polygonPoints);
-                DrawPoints(pea, brush, polygonPoints);
+                
+                //DrawPoints(pea, brush, polygonPoints);
             }            
             // !!!!!!!!!!!!!! DrawPoints
 
@@ -99,7 +102,9 @@ namespace acg_dotnet
             return new int[] { b, a };
         }
 
-        private void FillPolygon(PaintEventArgs pea, Brush brush, int x0, int y0, int x1, int y1, int x2, int y2) {
+        private void FillPolygon(PaintEventArgs pea, Brush brush, 
+            int x0, int y0, int z0, int x1, int y1, int z1, int x2, int y2, int z2) {
+
             if (y0 > y1) {
                 int[] tmp = Swap(y0, y1);
                 y0 = tmp[0];
@@ -108,6 +113,10 @@ namespace acg_dotnet
                 tmp = Swap(x0, x1);
                 x0 = tmp[0];
                 x1 = tmp[1];
+
+                tmp = Swap(z0, z1);
+                z0 = tmp[0];
+                z1 = tmp[1];
 
             }
 
@@ -120,6 +129,9 @@ namespace acg_dotnet
                 x0 = tmp[0];
                 x2 = tmp[1];
 
+                tmp = Swap(z0, z2);
+                z0 = tmp[0];
+                z2 = tmp[1];
             }
 
             if (y1 > y2) {
@@ -131,6 +143,10 @@ namespace acg_dotnet
                 x1 = tmp[0];
                 x2 = tmp[1];
 
+                tmp = Swap(z1, z2);
+                z1 = tmp[0];
+                z2 = tmp[1];
+
             }
             
             int total_height = y2 - y0;
@@ -141,9 +157,11 @@ namespace acg_dotnet
                 float beta = (float)(i - (second_half ? y1 - y0 : 0)) / segment_height;
                 float Ax = x0 + (x2 - x0) * alpha;
                 float Ay = y0 + (y2 - y0) * alpha;
+                float Az = z0 + (z2 - z0) * alpha;
 
                 float Bx = second_half ? x1 + (x2 - x1) * beta : x0 + (x1 - x0) * beta;
                 float By = second_half ? y1 + (y2 - y1) * beta : y0 + (y1 - y0) * beta;
+                float Bz = second_half ? z1 + (z2 - z1) * beta : z0 + (z1 - z0) * beta;
 
                 if (Ax > Bx) {
                     //std::swap(A, B);
@@ -155,10 +173,31 @@ namespace acg_dotnet
                     Ay = By;
                     By = tmp;
 
+                    tmp = Az;
+                    Az = Bz;
+                    Bz = tmp;
                 }
 
                 for (int j = Convert.ToInt32(Ax); j <= Bx; j++) {
-                    pea.Graphics.FillRectangle(brush, j, y0+i, 1, 1);
+                    //float phi = B.x == A.x ? 1. : (float)(j - A.x) / (float)(B.x - A.x);
+                    //Vec3i P = Vec3f(A) + Vec3f(B - A) * phi;
+                    float phi = Bx == Ax ? 1 : (float)(j - Ax) / (float)(Bx - Ax);
+                    double Pz = Az + (Bz - Az) * phi;
+                    if (Pz < zBuffer[j, y0 + i]) {
+                        zBuffer[j, y0 + i] = Pz;
+                        pea.Graphics.FillRectangle(brush, j, y0 + i, 1, 1);
+                    }
+                    // double T = (x1 - x0) * i;
+                    // double K = (j - x0) * (y1 - y0);
+                    // double B = (T-K)/(y2*(x1-x0) + y1*(x2-x1) + y1*(x0-x2));
+                    // double A = (j - x0 - B * (x2 - x0)) / (x1 - x0);
+                    // double z = z0 + A * (z1 - z0) + B * (z2 - z0);
+                    // z = Az + (Bz - Az) * (j - Ax)/(Bx - Ax);
+                    // if (z < zBuffer[j, y0 + i]) {
+                    //    zBuffer[j, y0 + i] = z;
+                    //pea.Graphics.FillRectangle(brush, j, y0 + i, 1, 1);
+                   // }
+                    
                     //image.set(j, y0 + i); // attention, due to int casts t0.y+i != A.y
                 }
             }            
@@ -198,22 +237,31 @@ namespace acg_dotnet
 
             List<double[]> xy = new List<double[]>();            
             int i = 0;
-            xy.Add(new double[] { x1, y1 });           
+            xy.Add(new double[] { x1, y1, z1 });           
             i += 1;
 
             while (i < L) {
-                xy.Add(new double[] { xy[i - 1][0] + dx, xy[i - 1][1] + dy });                
+                xy.Add(new double[] {
+                    xy[i - 1][0] + dx,
+                    xy[i - 1][1] + dy,
+                    z1 + (z2 - z1)*(xy[i - 1][0] + dx - x1)/(x2-x1) // linear interpolation
+                });                
                 i += 1;
             }
 
-            xy.Add(new double[] { x2, y2 });
+            xy.Add(new double[] { x2, y2, z2 });
 
             return xy;//new Tuple<List<double>, List<double>>(x, y);
         }
 
         private void DrawPoints(PaintEventArgs pea, Brush brush, List<double[]> xy) {
             for (int i = 0; i < xy.Count; i++) {
-                pea.Graphics.FillRectangle(brush, Convert.ToSingle(xy[i][0]), Convert.ToSingle(xy[i][1]), 1, 1);
+                int x_indx = Convert.ToInt32(Math.Round(xy[i][0]));
+                int y_indx = Convert.ToInt32(Math.Round(xy[i][1]));
+                if (xy[i][2] < zBuffer[x_indx, y_indx]) {
+                  //  zBuffer[x_indx, y_indx] = xy[i][2];
+                 //   pea.Graphics.FillRectangle(brush, Convert.ToSingle(xy[i][0]), Convert.ToSingle(xy[i][1]), 1, 1);
+                }
             }
         }
 
