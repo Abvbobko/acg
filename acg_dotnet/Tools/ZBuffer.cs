@@ -29,7 +29,7 @@ namespace acg_dotnet.Tools
                 if ((x < width) && (y < height)) {
                     return buffer[x, y];
                 }                
-                return float.NegativeInfinity;
+                return double.NegativeInfinity;
             }
 
             set {

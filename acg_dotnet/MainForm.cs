@@ -75,10 +75,15 @@ namespace acg_dotnet
                 y2 = vertices.At(1, face.Last() - 1);
                 z2 = vertices.At(2, face.Last() - 1);
                 //Brush brush1 = Brushes.Green;
-                
+                            
                 double x1_ = vertices.At(0, face[0] - 1), y1_ = vertices.At(1, face[0] - 1), z1_ = vertices.At(2, face[0] - 1);
                 double x2_ = vertices.At(0, face[1] - 1), y2_ = vertices.At(1, face[1] - 1), z2_ = vertices.At(2, face[1] - 1);
                 double x3_ = vertices.At(0, face[2] - 1), y3_ = vertices.At(1, face[2] - 1), z3_ = vertices.At(2, face[2] - 1);
+
+                if (cnt_0 < 20) {
+                    Console.WriteLine(z1_ + " " + z2_ + " " + z3_);
+                    cnt_0 += 1;
+                }
 
                 Brush polygon_brush = GetBrush(
                     new double[] { x1_, y1_, z1_ },
@@ -89,20 +94,23 @@ namespace acg_dotnet
                 FillPolygon(
                     pea,
                     polygon_brush,
-                    Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)), Convert.ToInt32(Math.Round(z1_)),
-                    Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)), Convert.ToInt32(Math.Round(z2_)),
-                    Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), Convert.ToInt32(Math.Round(z3_))
+                    Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)), z1_,
+                    Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)), z2_,
+                    Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), z3_
+                    //Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)), Convert.ToInt32(Math.Round(z1_)),
+                    //Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)), Convert.ToInt32(Math.Round(z2_)),
+                    //Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), Convert.ToInt32(Math.Round(z3_))
                 );
-
+                
                 //pea.Graphics.DrawLine(pen, new Point(Convert.ToInt32(x1), Convert.ToInt32(y1)), new Point(Convert.ToInt32(x2), Convert.ToInt32(y2)));
                 //polygonPoints.AddRange(DDA_Line(x1, x2, y1, y2, z1, z2));
 
                 //FillPolygon(pea, polygonPoints);
-                
-                //DrawPoints(pea, brush, polygonPoints);
-            }            
-            // !!!!!!!!!!!!!! DrawPoints
 
+                //DrawPoints(pea, brush, polygonPoints);
+            }
+            // !!!!!!!!!!!!!! DrawPoints
+            
         }
 
         private Brush GetBrush(double[] v1, double[] v2, double[] v3) {
@@ -113,78 +121,85 @@ namespace acg_dotnet
                 normal,
                 TransformationMatrices.ArrayOnNumberProduct(light, -1)
              ))));
-            Console.WriteLine(coef);
+            
             return new SolidBrush(Color.FromArgb(0, coef, 0));
         }
 
-        private int[] Swap(int a, int b) {
+        private double[] Swap(double a, double b) {
+            return new double[] { b, a };
+        }
+
+        private int[] SwapInt(int a, int b) {
             return new int[] { b, a };
         }
 
-        private void FillPolygon(PaintEventArgs pea, Brush brush, 
-            int x0, int y0, int z0, int x1, int y1, int z1, int x2, int y2, int z2) {
+        private int cnt_0 = 0;
+        private int cnt_n0 = 0;
+
+        private void FillPolygon(PaintEventArgs pea, Brush brush,
+            int x0, int y0, double z0, int x1, int y1, double z1, int x2, int y2, double z2) {
 
             if (y0 > y1) {
-                int[] tmp = Swap(y0, y1);
+                int[] tmp = SwapInt(y0, y1);
                 y0 = tmp[0];
                 y1 = tmp[1];
 
-                tmp = Swap(x0, x1);
+                tmp = SwapInt(x0, x1);
                 x0 = tmp[0];
                 x1 = tmp[1];
 
-                tmp = Swap(z0, z1);
-                z0 = tmp[0];
-                z1 = tmp[1];
+                double[] tmp_d = Swap(z0, z1);
+                z0 = tmp_d[0];
+                z1 = tmp_d[1];
 
             }
 
             if (y0 > y2) {
-                int[] tmp = Swap(y0, y2);
+                int[] tmp = SwapInt(y0, y2);
                 y0 = tmp[0];
                 y2 = tmp[1];
 
-                tmp = Swap(x0, x2);
+                tmp = SwapInt(x0, x2);
                 x0 = tmp[0];
                 x2 = tmp[1];
 
-                tmp = Swap(z0, z2);
-                z0 = tmp[0];
-                z2 = tmp[1];
+                double[] tmp_d = Swap(z0, z2);
+                z0 = tmp_d[0];
+                z2 = tmp_d[1];
             }
 
             if (y1 > y2) {
-                int[] tmp = Swap(y1, y2);
+                int[] tmp = SwapInt(y1, y2);
                 y1 = tmp[0];
                 y2 = tmp[1];
 
-                tmp = Swap(x1, x2);
+                tmp = SwapInt(x1, x2);
                 x1 = tmp[0];
                 x2 = tmp[1];
 
-                tmp = Swap(z1, z2);
-                z1 = tmp[0];
-                z2 = tmp[1];
+                double[] tmp_d = Swap(z1, z2);
+                z1 = tmp_d[0];
+                z2 = tmp_d[1];
 
             }
-            
-            int total_height = y2 - y0;
+
+            double total_height = y2 - y0;
             for (int i = 0; i < total_height; i++) {
                 bool second_half = i > y1 - y0 || y1 == y0;
-                int segment_height = second_half ? y2 - y1 : y1 - y0;
-                float alpha = (float)i / total_height;
-                float beta = (float)(i - (second_half ? y1 - y0 : 0)) / segment_height;
-                float Ax = x0 + (x2 - x0) * alpha;
-                float Ay = y0 + (y2 - y0) * alpha;
-                float Az = z0 + (z2 - z0) * alpha;
+                double segment_height = second_half ? y2 - y1 : y1 - y0;
+                double alpha = i / total_height;
+                double beta = (i - (second_half ? y1 - y0 : 0)) / segment_height;
+                double Ax = x0 + (x2 - x0) * alpha;
+                double Ay = y0 + (y2 - y0) * alpha;
+                double Az = z0 + (z2 - z0) * alpha;
 
-                float Bx = second_half ? x1 + (x2 - x1) * beta : x0 + (x1 - x0) * beta;
-                float By = second_half ? y1 + (y2 - y1) * beta : y0 + (y1 - y0) * beta;
-                float Bz = second_half ? z1 + (z2 - z1) * beta : z0 + (z1 - z0) * beta;
+                double Bx = second_half ? x1 + (x2 - x1) * beta : x0 + (x1 - x0) * beta;
+                double By = second_half ? y1 + (y2 - y1) * beta : y0 + (y1 - y0) * beta;
+                double Bz = second_half ? z1 + (z2 - z1) * beta : z0 + (z1 - z0) * beta;
 
                 if (Ax > Bx) {
                     //std::swap(A, B);
-                    float tmp = Ax;
+                    double tmp = Ax;
                     Ax = Bx;
                     Bx = tmp;
 
@@ -197,12 +212,30 @@ namespace acg_dotnet
                     Bz = tmp;
                 }
 
+                /*
+                 int ceilX = (int) Math.ceil(x);
+                if (fromX > ceilX) {
+                    fromX = ceilX;
+                }
+                if (toX < x) {
+                    toX = (int) x;
+                }
+                 */
+
+
                 for (int j = Convert.ToInt32(Ax); j <= Bx; j++) {
                     //float phi = B.x == A.x ? 1. : (float)(j - A.x) / (float)(B.x - A.x);
                     //Vec3i P = Vec3f(A) + Vec3f(B - A) * phi;
-                    float phi = Bx == Ax ? 1 : (float)(j - Ax) / (float)(Bx - Ax);
+                    double phi = Bx == Ax ? 1 : (j - Ax) / (Bx - Ax);
                     double Pz = Az + (Bz - Az) * phi;
                     if (Pz < zBuffer[j, y0 + i]) {
+                        if (Pz == 0) {
+                           // if (cnt_0 < 20) {
+                                //Console.WriteLine(Ax + " " + Ay + " " + Az);
+                            //    cnt_0 += 1;
+                           // }
+                            
+                        }
                         zBuffer[j, y0 + i] = Pz;
                         pea.Graphics.FillRectangle(brush, j, y0 + i, 1, 1);
                     }
