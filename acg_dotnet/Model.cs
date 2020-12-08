@@ -86,17 +86,50 @@ namespace acg_dotnet
                     ).Multiply(scale_matrix
                     ).Multiply(vertices);
             }
-            
-            Matrix<double> perspective = Constants.W_TO_V_perspective.Multiply(moving_matrix
+
+            /*Matrix<double> perspective = Constants.P_TO_V.Multiply(Constants.W_TO_P_perspective).Multiply(moving_matrix
               ).Multiply(rotate_matrix
               ).Multiply(scale_matrix
-              ).Multiply(vertices);            
+              ).Multiply(vertices);*/
+
+            Matrix<double> perspective = vertices;
+
+            Console.WriteLine("vertices: " + perspective[0, 10] + " " + perspective[1, 10] + " " + perspective[2, 10] + " " + perspective[3, 10]);
+
+            perspective = scale_matrix.Multiply(perspective);
+
+            Console.WriteLine("scale: " + perspective[0, 10] + " " + perspective[1, 10] + " " + perspective[2, 10] + " " + perspective[3, 10]);
+
+            perspective = rotate_matrix.Multiply(perspective);
+
+            Console.WriteLine("rotate: " + perspective[0, 10] + " " + perspective[1, 10] + " " + perspective[2, 10] + " " + perspective[3, 10]);
+
+            perspective = moving_matrix.Multiply(perspective);
+
+            Console.WriteLine("moving: " + perspective[0, 10] + " " + perspective[1, 10] + " " + perspective[2, 10] + " " + perspective[3, 10]);
+
+            perspective = Constants.W_TO_O.Multiply(perspective);
+
+            Console.WriteLine("w_to_o: " + perspective[0, 10] + " " + perspective[1, 10] + " " + perspective[2, 10] + " " + perspective[3, 10]);
+
+            perspective = Constants.O_TO_P_PERSPECTIVE.Multiply(perspective);
+
+            Console.WriteLine("O_TO_P_PERSPECTIVE: " + perspective[0, 10] + " " + perspective[1, 10] + " " + perspective[2, 10] + " " + perspective[3, 10]);
+          
+
+            //Console.WriteLine(perspective[0, 10] + " " + perspective[1, 10] + " " + perspective[2, 10] + " " + perspective[3, 10]);
 
             for (int i = 0; i < perspective.RowCount; i++) {
                 for (int j = 0; j < perspective.ColumnCount; j++) {
                     perspective[i, j] /= 1.0* perspective[perspective.RowCount - 1, j];
                 }
-            }            
+            }
+
+            perspective = Constants.P_TO_V.Multiply(perspective);
+
+            Console.WriteLine("P_TO_V: " + perspective[0, 10] + " " + perspective[1, 10] + " " + perspective[2, 10] + " " + perspective[3, 10]);
+
+            //Console.WriteLine(perspective[0, 10] + " " + perspective[1, 10] + " " + perspective[2, 10] + " " + perspective[3, 10]);
 
             return perspective;
         }

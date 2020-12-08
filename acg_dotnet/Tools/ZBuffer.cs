@@ -34,7 +34,7 @@ namespace acg_dotnet.Tools
             }
 
             set {
-                if ((x < width) && (y < height)) {
+                if ((x < width) && (y < height) && (x >= 0) && (y >= 0)) {
                     buffer[x, y] = value;
                 }                
             }

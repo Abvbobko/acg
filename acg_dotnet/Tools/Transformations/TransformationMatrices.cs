@@ -248,7 +248,7 @@ namespace acg_dotnet.Tools.Transformations
 
 
         // observer to projection
-        public static Matrix<double> orthographicMatrix(int width, int height, int z_near, int z_far) {
+        public static Matrix<double> orthographicMatrix(int width, int height, double z_near, int z_far) {
             /*
                 Матрица преобразует векторы из пространства наблюдателя
                 в пространство ортографической проекции
@@ -270,7 +270,8 @@ namespace acg_dotnet.Tools.Transformations
             );
         }
 
-        public static Matrix<double> perspectiveMatrix(int width, int height, int z_near, int z_far, double FOV = Math.PI / 4, double aspect = Constants.WIN_WIDTH/Constants.WIN_HEIGHT) {
+        public static Matrix<double> perspectiveMatrix(int width, int height, double z_near, int z_far, 
+            double FOV = Constants.FOV, double aspect = Constants.ASPECT) {
             /*
                 Матрица преобразует векторы из пространства наблюдателя
                 в пространство перспективной проекции    
@@ -278,7 +279,7 @@ namespace acg_dotnet.Tools.Transformations
                 | 2*Z_near/width 0               0                      0                           |
                 | 0              2*Z_near/height 0                      0                           |
                 | 0              0               Z_far/(Z_near - Z_far) Z_near*Z_far/(Z_near-Z_far) |
-                | 0              0               -1                     1                           |         
+                | 0              0               -1                     0                           |         
 
             */
 
@@ -295,10 +296,11 @@ namespace acg_dotnet.Tools.Transformations
                 new Point(0, 0, 1.0*z_far / (z_near - z_far)),
                 new Point(0, 0, 1.0 * z_near * z_far / (z_near - z_far))
             ) - tmp_matrix;*/
+
             double[,] matrix = new double[,] {
                 { 1/(aspect*Math.Tan(FOV/2)), 0, 0, 0 },
-                { 0, 1/(Math.Tan(FOV/2)) , 0, 0 },
-                { 0, 0, 1.0*z_far / (z_near - z_far), 1.0 * z_near * z_far / (z_near - z_far) },
+                { 0, 1/Math.Tan(FOV/2) , 0, 0 },
+                { 0, 0, (double)z_far / (z_near - z_far), (double)z_near * z_far / (z_near - z_far) },
                 { 0, 0, -1, 0 }
             };
             return DenseMatrix.OfArray(matrix);

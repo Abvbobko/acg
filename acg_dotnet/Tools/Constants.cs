@@ -30,13 +30,13 @@ namespace acg_dotnet.Tools
 
         public const int O_TO_P_WIDTH = WIN_WIDTH;
         public const int O_TO_P_HEIGHT = WIN_HEIGHT;
-        public const int Z_NEAR = 0;
+        public const double Z_NEAR = 0.4;
         public const int Z_FAR = 700;
 
         public const int P_TO_V_WIDTH = WIN_WIDTH;
         public const int P_TO_V_HEIGHT = WIN_HEIGHT;
-        public const int X_MIN = 100;
-        public const int Y_MIN = -100;
+        public const int X_MIN = 0;
+        public const int Y_MIN = 0;
 
         public const int SPEED = 5;
 
@@ -50,29 +50,31 @@ namespace acg_dotnet.Tools
 
         public const double ROTATE_SPEED = 0.1;
 
-        public static Matrix<double> INIT_MODEL_TO_WORLD_MATRIX = TransformationMatrices.ScaleMatrix(new Point(250, 250, 250));
+        public static Matrix<double> INIT_MODEL_TO_WORLD_MATRIX = TransformationMatrices.ScaleMatrix(new Point(200, 200, 200));
 
         public const double SCALE_UP_SPEED = 1.2;
         public const double SCALE_DOWN_SPEED = 1.0 / SCALE_UP_SPEED;
 
         public static Matrix<double> W_TO_O = TransformationMatrices.WorldToObserver(EYE, TARGET, UP);
         public static Matrix<double> O_TO_P = TransformationMatrices.orthographicMatrix(
-            O_TO_P_HEIGHT, O_TO_P_WIDTH, Z_NEAR, Z_FAR
+            O_TO_P_WIDTH, O_TO_P_HEIGHT, Z_NEAR, Z_FAR
         );
 
         public static Matrix<double> O_TO_P_PERSPECTIVE = TransformationMatrices.perspectiveMatrix(
-            O_TO_P_HEIGHT, O_TO_P_WIDTH, Z_NEAR, Z_FAR
+            O_TO_P_WIDTH, O_TO_P_HEIGHT, Z_NEAR, 100
         );
 
         public static Matrix<double> P_TO_V = TransformationMatrices.viewportMatrix(
-            P_TO_V_HEIGHT, P_TO_V_WIDTH, X_MIN, Y_MIN
+            P_TO_V_WIDTH, P_TO_V_HEIGHT, X_MIN, Y_MIN
         );
 
         public static Matrix<double> W_TO_V = P_TO_V.Multiply(O_TO_P).Multiply(W_TO_O);
         public static Matrix<double> W_TO_V_perspective = P_TO_V.Multiply(O_TO_P_PERSPECTIVE).Multiply(W_TO_O);
 
 
-        public static readonly double[] LIGHT = { 0, 0, -300, 1 };
+        public static Matrix<double> W_TO_P_perspective = O_TO_P_PERSPECTIVE.Multiply(W_TO_O);
+
+        public static readonly double[] LIGHT = { 0, 0, 300, 1 };
         public static readonly double[] REVERSE_LIGHT_VIEWPORT_NORM = TransformationMatrices.NormalizeArray(
             TransformationMatrices.ArrayOnNumberProduct(
                 W_TO_V.Multiply(DenseVector.OfArray(LIGHT)).AsArray(), 
@@ -93,5 +95,9 @@ namespace acg_dotnet.Tools
 
         public const Keys CHANGE_PROJECTION_BUTTON = Keys.P;
         public const Keys OPEN_FILE_BUTTON = Keys.O;
+
+
+        public const double FOV = Math.PI / 4;
+        public const double ASPECT = (double)WIN_WIDTH / WIN_HEIGHT;
     }
 }

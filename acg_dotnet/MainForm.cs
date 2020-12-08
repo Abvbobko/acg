@@ -106,11 +106,7 @@ namespace acg_dotnet
                 normal,
                 light
              //TransformationMatrices.ArrayOnNumberProduct(light, -1)
-             ))));
-            if (cnt < 20) {
-                cnt += 1;
-                Console.WriteLine(coef);
-            }
+             ))));            
             return new SolidBrush(Color.FromArgb(0, coef, 0));
         }
 
@@ -125,7 +121,7 @@ namespace acg_dotnet
 
         private void FillPolygon(PaintEventArgs pea, Brush brush,
             int x0, int y0, double z0, int x1, int y1, double z1, int x2, int y2, double z2) {
-
+            //Console.WriteLine(z0 + " " + z1 + " " + z2);
             if (y0 > y1) {
                 int[] tmp = SwapInt(y0, y1);
                 y0 = tmp[0];
@@ -202,6 +198,7 @@ namespace acg_dotnet
                 for (int j = Convert.ToInt32(Ax); j <= Bx; j++) {                 
                     double phi = Bx == Ax ? 1 : (j - Ax) / (Bx - Ax);
                     double Pz = Az + (Bz - Az) * phi;
+                    
                     if (Pz < zBuffer[j, y0 + i]) {                        
                         zBuffer[j, y0 + i] = Pz;
                         pea.Graphics.FillRectangle(brush, j, y0 + i, 1, 1);
@@ -286,9 +283,7 @@ namespace acg_dotnet
                 case Constants.LEFT_BUTTON:                    
                     model.MoveFigure(new Point(-Constants.SPEED, 0, 0));
                     break;
-                case Constants.RIGHT_BUTTON:
-                    Console.WriteLine("##################");
-                    cnt = 0;
+                case Constants.RIGHT_BUTTON:                    
                     model.MoveFigure(new Point(Constants.SPEED, 0, 0));
                     break;
                 case Constants.UP_BUTTON:
@@ -300,9 +295,7 @@ namespace acg_dotnet
                 case Constants.X_ROTATE_BUTTON:                    
                     model.RotateFigure(TransformationMatrices.XRotationMatrix, shift);
                     break;
-                case Constants.Y_ROTATE_BUTTON:
-                    Console.WriteLine("##################");
-                    cnt = 0;
+                case Constants.Y_ROTATE_BUTTON:                    
                     model.RotateFigure(TransformationMatrices.YRotationMatrix, shift);
                     break;
                 case Constants.Z_ROTATE_BUTTON:
