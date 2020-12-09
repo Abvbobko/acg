@@ -74,13 +74,13 @@ namespace acg_dotnet.Tools
 
         public static Matrix<double> W_TO_P_perspective = O_TO_P_PERSPECTIVE.Multiply(W_TO_O);
 
-        public static readonly double[] LIGHT = { 0, 0, 300, 1 };
-        public static readonly double[] REVERSE_LIGHT_VIEWPORT_NORM = TransformationMatrices.NormalizeArray(
-            TransformationMatrices.ArrayOnNumberProduct(
-                W_TO_V.Multiply(DenseVector.OfArray(LIGHT)).AsArray(), 
-                -1
-            )
-        );
+        public static readonly double[] LIGHT = { WIN_WIDTH, WIN_HEIGHT, -300, 1 };
+        public static readonly double[] REVERSE_LIGHT_VIEWPORT_NORM =// TransformationMatrices.NormalizeArray(
+                                                                     //TransformationMatrices.ArrayOnNumberProduct(
+                W_TO_V.Multiply(DenseVector.OfArray(LIGHT)).AsArray();//, 
+                //-1
+           // )
+        //);
       //  public static Vector<double> VIEWPORT_LIGHT = W_TO_V.Multiply(DenseVector.OfArray(LIGHT));
 
         // keys

@@ -15,6 +15,7 @@ namespace acg_dotnet
 
         ObjLoader objLoader;
         Matrix<double> vertices;
+        Matrix<double> vertices_normals;
         Matrix<double> moving_matrix;
         Matrix<double> scale_matrix;
         Matrix<double> rotate_matrix;
@@ -27,7 +28,7 @@ namespace acg_dotnet
         }
 
         public void SetModel(string path) {
-            vertices = LoadModel(path).Transpose();
+            LoadModel(path);
             Reset();
         }
 
@@ -37,9 +38,10 @@ namespace acg_dotnet
             rotate_matrix = TransformationMatrices.GetEye4();
         }
 
-        public Matrix<double> LoadModel(string path) {
+        public void LoadModel(string path) {
             objLoader.Load(path);
-            return objLoader.Vertices;
+            vertices = objLoader.Vertices.Transpose();
+            vertices_normals = objLoader.VerticesNormals.Transpose();
         }
 
         public void MoveFigure(Point matrix_args) {
@@ -79,18 +81,26 @@ namespace acg_dotnet
             projection_type = !projection_type;
         }
 
-        public Matrix<double> TransformCoordinates() {
+        public Matrix<double> TransformVertices() {
+            return TransformCoordinates(vertices);
+        }
+
+        public Matrix<double> TransformVerticesNormals() {
+            return TransformCoordinates(vertices_normals);
+        }
+
+        public Matrix<double> TransformCoordinates(Matrix<double> v) {
             if (projection_type) {
                 return Constants.W_TO_V.Multiply(moving_matrix
                     ).Multiply(rotate_matrix
                     ).Multiply(scale_matrix
-                    ).Multiply(vertices);
+                    ).Multiply(v);
             }
 
             Matrix<double> perspective = Constants.W_TO_P_perspective.Multiply(moving_matrix
               ).Multiply(rotate_matrix
               ).Multiply(scale_matrix
-              ).Multiply(vertices);            
+              ).Multiply(v);            
 
             for (int i = 0; i < perspective.RowCount; i++) {
                 for (int j = 0; j < perspective.ColumnCount; j++) {
@@ -104,6 +114,12 @@ namespace acg_dotnet
         public List<List<int>> FacesV {
             get {
                 return objLoader.FacesV;
+            }
+        }
+
+        public List<List<int>> FacesVn {
+            get {
+                return objLoader.FacesVn;
             }
         }
     }

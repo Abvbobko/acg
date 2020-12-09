@@ -179,7 +179,7 @@ namespace acg_dotnet.Tools.Transformations
             return vector;
         }
 
-        private static double[] SubstractArrays(double[] a, double[] b) {
+        public static double[] SubstractArrays(double[] a, double[] b) {
             if (a.Length != b.Length) {
                 throw new Exception("a and b must be the same length.");
             }

@@ -45,12 +45,19 @@ namespace acg_dotnet
             Pen pen = new Pen(ForeColor);
             Brush brush = Brushes.Black;
 
-            Matrix<double> vertices = model.TransformCoordinates();
-            List<List<int>> faces = RejectFaces(model.FacesV, vertices);
+            Matrix<double> vertices = model.TransformVertices();
+            Matrix<double> vertices_n = model.TransformVerticesNormals();
+
+            // возвращать только индексы нужных faces
+            List<int> indexes = RejectFaces(model.FacesV, vertices);
+            List<List<int>> faces = model.FacesV;
+            List<List<int>> faces_vn = model.FacesVn;
 
             zBuffer = new ZBuffer(Size.Width, Size.Height);
 
-            foreach (List<int> face in faces) {
+            //int face_index = 0;
+            
+            foreach (int index in indexes) {
                 List<double[]> polygonPoints = new List<double[]>();
                 double x1, x2, y1, y2, z1, z2;
                 ///////////////// по идее можно удалить
@@ -66,22 +73,43 @@ namespace acg_dotnet
                     polygonPoints.AddRange(DDA_Line(x1, x2, y1, y2, z1, z2));
                 }*/
                 //////////////////////////////////////////
-                x1 = vertices.At(0, face[0] - 1);
-                y1 = vertices.At(1, face[0] - 1);
-                z1 = vertices.At(2, face[0] - 1);
+                x1 = vertices.At(0, faces[index][0] - 1);
+                y1 = vertices.At(1, faces[index][0] - 1);
+                z1 = vertices.At(2, faces[index][0] - 1);
 
-                x2 = vertices.At(0, face.Last() - 1);
-                y2 = vertices.At(1, face.Last() - 1);
-                z2 = vertices.At(2, face.Last() - 1);                
+                x2 = vertices.At(0, faces[index].Last() - 1);
+                y2 = vertices.At(1, faces[index].Last() - 1);
+                z2 = vertices.At(2, faces[index].Last() - 1);                
                             
-                double x1_ = vertices.At(0, face[0] - 1), y1_ = vertices.At(1, face[0] - 1), z1_ = vertices.At(2, face[0] - 1);
-                double x2_ = vertices.At(0, face[1] - 1), y2_ = vertices.At(1, face[1] - 1), z2_ = vertices.At(2, face[1] - 1);
-                double x3_ = vertices.At(0, face[2] - 1), y3_ = vertices.At(1, face[2] - 1), z3_ = vertices.At(2, face[2] - 1);                
+                double x1_ = vertices.At(0, faces[index][0] - 1), y1_ = vertices.At(1, faces[index][0] - 1), z1_ = vertices.At(2, faces[index][0] - 1);
+                double x2_ = vertices.At(0, faces[index][1] - 1), y2_ = vertices.At(1, faces[index][1] - 1), z2_ = vertices.At(2, faces[index][1] - 1);
+                double x3_ = vertices.At(0, faces[index][2] - 1), y3_ = vertices.At(1, faces[index][2] - 1), z3_ = vertices.At(2, faces[index][2] - 1);
+
+                //Console.WriteLine(faces_n.Count + " " + face_index);
+                double[] vn1 = new double[] {
+                    vertices_n.At(0, faces_vn[index][0] - 1),
+                    vertices_n.At(1, faces_vn[index][0] - 1),
+                    vertices_n.At(2, faces_vn[index][0] - 1)
+                };
+
+                double[] vn2 = new double[] {
+                    vertices_n.At(0, faces_vn[index][1] - 1),
+                    vertices_n.At(1, faces_vn[index][1] - 1),
+                    vertices_n.At(2, faces_vn[index][1] - 1)
+                };
+
+                double[] vn3 = new double[] {
+                    vertices_n.At(0, faces_vn[index][2] - 1),
+                    vertices_n.At(1, faces_vn[index][2] - 1),
+                    vertices_n.At(2, faces_vn[index][2] - 1)
+                };
 
                 Brush polygon_brush = GetBrush(
                     new double[] { x1_, y1_, z1_ },
                     new double[] { x2_, y2_, z2_ },
-                    new double[] { x3_, y3_, z3_ }
+                    new double[] { x3_, y3_, z3_ },
+                    vn1, vn2, vn3
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 );
 
                 FillPolygon(
@@ -90,24 +118,59 @@ namespace acg_dotnet
                     Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)), z1_,
                     Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)), z2_,
                     Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), z3_                
-                );                              
+                );
                 //polygonPoints.AddRange(DDA_Line(x1, x2, y1, y2, z1, z2));             
                 //DrawPoints(pea, brush, polygonPoints);
+                //face_index += 1;
             }            
             
         }
+        
+        private Brush GetBrush(double[] v1, double[] v2, double[] v3, double[] vn1, double[] vn2, double[] vn3) {
+            int R = 0;
+            int G = 255;
+            int B = 0;
+        
+            double[] light = new double[] {
+                Constants.REVERSE_LIGHT_VIEWPORT_NORM[0],
+                Constants.REVERSE_LIGHT_VIEWPORT_NORM[1],
+                Constants.REVERSE_LIGHT_VIEWPORT_NORM[2]
+            };
 
-        int cnt = 0;
-        private Brush GetBrush(double[] v1, double[] v2, double[] v3) {
-            double[] normal = new double[] { v1[0], v1[1], GetNormal(v1, v2, v3) };
-            normal = TransformationMatrices.NormalizeArray(normal);
-            double[] light = Constants.REVERSE_LIGHT_VIEWPORT_NORM; //TransformationMatrices.ArrayOnNumberProduct(Constants.W_TO_V.Multiply(DenseVector.OfArray(Constants.LIGHT)).ToArray(), -1);//TransformationMatrices.NormalizeArray(Constants.LIGHT);
-            int coef = Math.Abs(Convert.ToInt32(Math.Round(255 * TransformationMatrices.ArraysScalarProduct(
-                normal,
-                light
-             //TransformationMatrices.ArrayOnNumberProduct(light, -1)
-             ))));            
-            return new SolidBrush(Color.FromArgb(0, coef, 0));
+            double[] light_v1 = TransformationMatrices.NormalizeArray(TransformationMatrices.SubstractArrays(v1, light));
+            double[] light_v2 = TransformationMatrices.NormalizeArray(TransformationMatrices.SubstractArrays(v1, light));
+            double[] light_v3 = TransformationMatrices.NormalizeArray(TransformationMatrices.SubstractArrays(v1, light));
+                        
+            double[] normal_v1 = TransformationMatrices.NormalizeArray(vn1);
+            double[] normal_v2 = TransformationMatrices.NormalizeArray(vn2);
+            double[] normal_v3 = TransformationMatrices.NormalizeArray(vn3);
+
+            
+            double cos1 = TransformationMatrices.ArraysScalarProduct(
+                normal_v1, 
+                TransformationMatrices.ArrayOnNumberProduct(light_v1, -1)
+            );
+            double cos2 = TransformationMatrices.ArraysScalarProduct(
+                normal_v2,
+                TransformationMatrices.ArrayOnNumberProduct(light_v2, -1)
+            );
+            double cos3 = TransformationMatrices.ArraysScalarProduct(
+                normal_v3,
+                TransformationMatrices.ArrayOnNumberProduct(light_v3, -1)
+            );
+
+            cos1 = cos1 < 0 ? 0 : cos1;
+            cos2 = cos2 < 0 ? 0 : cos2;
+            cos3 = cos3 < 0 ? 0 : cos3;
+
+            Color color = Color.FromArgb(
+                Convert.ToInt32(Math.Round(Math.Sqrt(((R*cos1)*(R * cos1) + (R * cos2) * (R * cos2) + (R * cos3) * (R * cos3)) /3))),
+                Convert.ToInt32(Math.Round(Math.Sqrt(((G * cos1) * (G * cos1) + (G * cos2) * (G * cos2) + (G * cos3) * (G * cos3)) / 3))),
+                Convert.ToInt32(Math.Round(Math.Sqrt(((B * cos1) * (B * cos1) + (B * cos2) * (B * cos2) + (B * cos3) * (B * cos3)) / 3)))
+            );
+            //NewColor = sqrt((R1 ^ 2 + R2 ^ 2) / 2),sqrt((G1 ^ 2 + G2 ^ 2) / 2),sqrt((B1 ^ 2 + B2 ^ 2) / 2)
+
+            return new SolidBrush(color);
         }
 
         private double[] Swap(double a, double b) {
@@ -212,8 +275,9 @@ namespace acg_dotnet
             return (v2[0] - v1[0]) * (v3[1] - v1[1]) - (v3[0] - v1[0]) * (v2[1] - v1[1]);
         }
 
-        private List<List<int>> RejectFaces(List<List<int>> faces, Matrix<double> vertices) {
-            List<List<int>> visible_faces = new List<List<int>>();
+        private List<int> RejectFaces(List<List<int>> faces, Matrix<double> vertices) {
+            List<int> visible_faces_indexes = new List<int>();
+            int index = 0;
             foreach (List<int> face in faces) {
                 double x1 = vertices.At(0, face[0] - 1);
                 double y1 = vertices.At(1, face[0] - 1);
@@ -231,11 +295,12 @@ namespace acg_dotnet
                 bool sign = GetNormal(v1, v2, v3) < 0;
    
                 if (sign) {
-                    visible_faces.Add(face);
+                    visible_faces_indexes.Add(index);
                 }
+                index += 1;
             }
 
-            return visible_faces;
+            return visible_faces_indexes;
         }          
 
         private List<double[]> DDA_Line(double x1, double x2, double y1, double y2, double z1, double z2) {            

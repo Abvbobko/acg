@@ -67,6 +67,9 @@ namespace acg_dotnet.Tools
                             for (int i = 2; i < values.Length; i++) {
                                 vertex.Add(double.Parse(values[i], CultureInfo.InvariantCulture));
                             }
+                            if (vertex.Count < 4) {
+                                vertex.Add(1);
+                            }
                             vertex_normals.Add(vertex);
                             break;
                         case "f":
