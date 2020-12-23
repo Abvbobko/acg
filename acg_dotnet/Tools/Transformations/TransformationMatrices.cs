@@ -192,6 +192,19 @@ namespace acg_dotnet.Tools.Transformations
             return c;
         }
 
+        public static double[] AddArrays(double[] a, double[] b) {
+            if (a.Length != b.Length) {
+                throw new Exception("a and b must be the same length.");
+            }
+
+            double[] c = new double[a.Length];
+            for (int i = 0; i < a.Length; i++) {
+                c[i] = a[i] + b[i];
+            }
+
+            return c;
+        }
+
         public static double[] Arrays3CrossProduct(double[] a, double[] b) {
             return new double[] {
                 a[1]*b[2] - a[2]*b[1],
@@ -214,6 +227,27 @@ namespace acg_dotnet.Tools.Transformations
                 result[i] = a[i] * coef;
             }
             return result;
+        }
+
+        public static double[] GetBarycentricCoordinates(double[] a, double[] b, double[] c, double[] p) {
+
+            double abc, cap, abp, bcp;
+
+            abc = GetTriangleArea(a, b, c);
+            cap = GetTriangleArea(c, a, p);
+            abp = GetTriangleArea(a, b, p);
+            bcp = GetTriangleArea(b, c, p);
+            
+            double[] bar = new double[] {
+                bcp / abc,
+                cap / abc,
+                abp / abc
+            };
+            return bar;
+        }
+
+        private static double GetTriangleArea(double[] a, double[] b, double[] c) {
+            return ArraysScalarProduct(SubstractArrays(b, a), SubstractArrays(c, a));
         }
 
         public static Matrix<double> WorldToObserver(double[] eye, double[] target, double[] up) {

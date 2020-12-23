@@ -59,20 +59,7 @@ namespace acg_dotnet
             
             foreach (int index in indexes) {
                 List<double[]> polygonPoints = new List<double[]>();
-                double x1, x2, y1, y2, z1, z2;
-                ///////////////// по идее можно удалить
-                /* for (int i = 1; i < face.Count; i++) {
-                    x1 = vertices.At(0, face[i - 1] - 1);
-                    y1 = vertices.At(1, face[i - 1] - 1);
-                    z1 = vertices.At(2, face[i - 1] - 1);
-
-                    x2 = vertices.At(0, face[i] - 1);
-                    y2 = vertices.At(1, face[i] - 1);
-                    z2 = vertices.At(2, face[i] - 1);
-                    //pea.Graphics.DrawLine(pen, new Point(Convert.ToInt32(x1), Convert.ToInt32(y1)), new Point(Convert.ToInt32(x2), Convert.ToInt32(y2)));
-                    polygonPoints.AddRange(DDA_Line(x1, x2, y1, y2, z1, z2));
-                }*/
-                //////////////////////////////////////////
+                double x1, x2, y1, y2, z1, z2;               
                 x1 = vertices.At(0, faces[index][0] - 1);
                 y1 = vertices.At(1, faces[index][0] - 1);
                 z1 = vertices.At(2, faces[index][0] - 1);
@@ -84,8 +71,7 @@ namespace acg_dotnet
                 double x1_ = vertices.At(0, faces[index][0] - 1), y1_ = vertices.At(1, faces[index][0] - 1), z1_ = vertices.At(2, faces[index][0] - 1);
                 double x2_ = vertices.At(0, faces[index][1] - 1), y2_ = vertices.At(1, faces[index][1] - 1), z2_ = vertices.At(2, faces[index][1] - 1);
                 double x3_ = vertices.At(0, faces[index][2] - 1), y3_ = vertices.At(1, faces[index][2] - 1), z3_ = vertices.At(2, faces[index][2] - 1);
-
-                //Console.WriteLine(faces_n.Count + " " + face_index);
+                
                 double[] vn1 = new double[] {
                     vertices_n.At(0, faces_vn[index][0] - 1),
                     vertices_n.At(1, faces_vn[index][0] - 1),
@@ -104,28 +90,61 @@ namespace acg_dotnet
                     vertices_n.At(2, faces_vn[index][2] - 1)
                 };
 
-                Brush polygon_brush = GetBrush(
+                /*Brush polygon_brush = GetBrush(
                     new double[] { x1_, y1_, z1_ },
                     new double[] { x2_, y2_, z2_ },
                     new double[] { x3_, y3_, z3_ },
-                    vn1, vn2, vn3
-                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                );
+                    vn1, vn2, vn3                    
+                );*/                
 
                 FillPolygon(
                     pea,
-                    polygon_brush,
+                    //polygon_brush,
                     Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)), z1_,
                     Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)), z2_,
                     Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), z3_                
-                );
-                //polygonPoints.AddRange(DDA_Line(x1, x2, y1, y2, z1, z2));             
-                //DrawPoints(pea, brush, polygonPoints);
-                //face_index += 1;
+                );                
             }            
             
         }
-        
+
+        private Brush PhongShadingBrush(double[] a, double[] b, double[] c, double[] p) {
+            int R = 0;
+            int G = 255;
+            int B = 0;
+
+            double[] bar = TransformationMatrices.GetBarycentricCoordinates(a, b, c, p);
+            double[] normal = TransformationMatrices.AddArrays(
+                    TransformationMatrices.ArrayOnNumberProduct(a, bar[0]),
+                    TransformationMatrices.AddArrays(
+                        TransformationMatrices.ArrayOnNumberProduct(b, bar[1]),
+                        TransformationMatrices.ArrayOnNumberProduct(c, bar[2])
+                    )
+                );
+
+            double[] light = new double[] {
+                Constants.REVERSE_LIGHT_VIEWPORT_NORM[0],
+                Constants.REVERSE_LIGHT_VIEWPORT_NORM[1],
+                Constants.REVERSE_LIGHT_VIEWPORT_NORM[2]
+            };
+
+            light = TransformationMatrices.NormalizeArray(TransformationMatrices.SubstractArrays(p, light));
+            normal = TransformationMatrices.NormalizeArray(normal);
+            double cos = TransformationMatrices.ArraysScalarProduct(
+                normal,
+                TransformationMatrices.ArrayOnNumberProduct(light, -1)
+            );
+
+            cos = cos < 0 ? 0 : cos;
+            Color color = Color.FromArgb(
+                Convert.ToInt32(Math.Round(R * cos)),
+                Convert.ToInt32(Math.Round(G * cos)),
+                Convert.ToInt32(Math.Round(B * cos))
+            );
+            return new SolidBrush(color);
+
+        }
+
         private Brush GetBrush(double[] v1, double[] v2, double[] v3, double[] vn1, double[] vn2, double[] vn3) {
             int R = 0;
             int G = 255;
@@ -182,8 +201,12 @@ namespace acg_dotnet
         }
                 
 
-        private void FillPolygon(PaintEventArgs pea, Brush brush,
+        private void FillPolygon(PaintEventArgs pea,
             int x0, int y0, double z0, int x1, int y1, double z1, int x2, int y2, double z2) {
+
+            double[] a = new double[] { x0, y0, z0 };
+            double[] b = new double[] { x1, y1, z1 };
+            double[] c = new double[] { x2, y2, z2 };
             //Console.WriteLine(z0 + " " + z1 + " " + z2);
             if (y0 > y1) {
                 int[] tmp = SwapInt(y0, y1);
@@ -264,6 +287,7 @@ namespace acg_dotnet
                     
                     if (Pz < zBuffer[j, y0 + i]) {                        
                         zBuffer[j, y0 + i] = Pz;
+                        Brush brush = PhongShadingBrush(a, b, c, new double[] { j, y0 + i, Pz });
                         pea.Graphics.FillRectangle(brush, j, y0 + i, 1, 1);
                     }                    
                 }
