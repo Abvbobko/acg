@@ -90,16 +90,16 @@ namespace acg_dotnet
                     vertices_n.At(2, faces_vn[index][2] - 1)
                 };
 
-                /*Brush polygon_brush = GetBrush(
+                Brush polygon_brush = GetBrush(
                     new double[] { x1_, y1_, z1_ },
                     new double[] { x2_, y2_, z2_ },
                     new double[] { x3_, y3_, z3_ },
                     vn1, vn2, vn3                    
-                );*/                
+                );               
 
                 FillPolygon(
                     pea,
-                    //polygon_brush,
+                    polygon_brush,
                     Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)), z1_,
                     Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)), z2_,
                     Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), z3_                
@@ -199,14 +199,65 @@ namespace acg_dotnet
         private int[] SwapInt(int a, int b) {
             return new int[] { b, a };
         }
-                
 
-        private void FillPolygon(PaintEventArgs pea,
+        private bool filterCoordinates(double[] a, double[] b, double[] c) {
+            /*if ((a[0] == b[0]) && (b[0] == c[0])) {
+                return false;
+            }
+
+            if ((a[1] == b[1]) && (b[1] == c[1])) {
+                return false;
+            }*/
+
+
+            double x1, x2, x3, y1, y2, y3;
+
+            if ((a[0] != b[0]) && (a[1] != b[1])) {
+                x1 = a[0];
+                x2 = b[0];
+                x3 = c[0];
+                y1 = a[1];
+                y2 = b[1];
+                y3 = c[1];
+            }
+            else if ((c[0] != b[0]) && (c[1] != b[1])) {
+                x1 = c[0];
+                x2 = b[0];
+                x3 = a[0];
+                y1 = c[1];
+                y2 = b[1];
+                y3 = a[1];
+            }
+            else if ((c[0] != a[0]) && (c[1] != a[1])) {
+                x1 = c[0];
+                x2 = a[0];
+                x3 = b[0];
+                y1 = c[1];
+                y2 = a[1];
+                y3 = b[1];
+            }
+            else {
+                return false;
+            }
+
+            if ((x3 - x1) / (x2 - x1) == (y3 - y1) / (y2 - y1)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void FillPolygon(PaintEventArgs pea, Brush brush,
             int x0, int y0, double z0, int x1, int y1, double z1, int x2, int y2, double z2) {
 
             double[] a = new double[] { x0, y0, z0 };
             double[] b = new double[] { x1, y1, z1 };
             double[] c = new double[] { x2, y2, z2 };
+
+            if (!filterCoordinates(a, b, c)) {
+                return ;
+            }
+            
             //Console.WriteLine(z0 + " " + z1 + " " + z2);
             if (y0 > y1) {
                 int[] tmp = SwapInt(y0, y1);
@@ -287,7 +338,7 @@ namespace acg_dotnet
                     
                     if (Pz < zBuffer[j, y0 + i]) {                        
                         zBuffer[j, y0 + i] = Pz;
-                        Brush brush = PhongShadingBrush(a, b, c, new double[] { j, y0 + i, Pz });
+                        //Brush brush = PhongShadingBrush(a, b, c, new double[] { j, y0 + i, Pz });
                         pea.Graphics.FillRectangle(brush, j, y0 + i, 1, 1);
                     }                    
                 }

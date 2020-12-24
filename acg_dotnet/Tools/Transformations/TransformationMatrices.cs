@@ -231,7 +231,7 @@ namespace acg_dotnet.Tools.Transformations
 
         public static double[] GetBarycentricCoordinates(double[] a, double[] b, double[] c, double[] p) {
 
-            double abc, cap, abp, bcp;
+            /*double abc, cap, abp, bcp;
 
             abc = GetTriangleArea(a, b, c);
             cap = GetTriangleArea(c, a, p);
@@ -242,7 +242,46 @@ namespace acg_dotnet.Tools.Transformations
                 bcp / abc,
                 cap / abc,
                 abp / abc
+            };*/
+            
+
+            double[] ab, ac, pa;
+            ab = SubstractArrays(b, a);
+            
+            ac = SubstractArrays(c, a);            
+
+            pa = SubstractArrays(a, p);            
+
+            double[] sx = new double[] { ab[0], ac[0], pa[0] };
+            sx = ArrayOnNumberProduct(sx, -1);            
+
+            double[] sy = new double[] { ab[1], ac[1], pa[1] };            
+
+            double[] u = Arrays3CrossProduct(sx, sy);            
+
+            double[] bar = new double[] {
+                1 - (u[0] + u[1])/u[2],
+                u[1]/u[2],
+                u[0]/u[2]
             };
+
+
+            bool print = false;
+            if (print) {
+                Console.WriteLine("a " + a[0] + " " + a[1] + " " + a[2]);
+                Console.WriteLine("b " + b[0] + " " + b[1] + " " + b[2]);
+                Console.WriteLine("c " + c[0] + " " + c[1] + " " + c[2]);
+                Console.WriteLine("p " + p[0] + " " + p[1] + " " + p[2]);
+
+                Console.WriteLine("ab " + ab[0] + " " + ab[1] + " " + ab[2]);
+                Console.WriteLine("ac " + ac[0] + " " + ac[1] + " " + ac[2]);
+                Console.WriteLine("pa " + pa[0] + " " + pa[1] + " " + pa[2]);
+                Console.WriteLine("sx "+  sx[0] + " " + sx[1] + " " + sx[2]);
+                Console.WriteLine("sy " + sy[0] + " " + sy[1] + " " + sy[2]);
+                Console.WriteLine("u " + u[0] + " " + u[1] + " " + u[2]);
+            }
+
+            //Console.WriteLine(bar[0] + " " + bar[1] + " " + bar[2]);
             return bar;
         }
 
