@@ -90,16 +90,16 @@ namespace acg_dotnet
                     vertices_n.At(2, faces_vn[index][2] - 1)
                 };
 
-                Brush polygon_brush = GetBrush(
+                /*Brush polygon_brush = GetBrush(
                     new double[] { x1_, y1_, z1_ },
                     new double[] { x2_, y2_, z2_ },
                     new double[] { x3_, y3_, z3_ },
                     vn1, vn2, vn3                    
-                );               
+                );  */             
 
                 FillPolygon(
                     pea,
-                    polygon_brush,
+                    //polygon_brush,
                     Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)), z1_,
                     Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)), z2_,
                     Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), z3_                
@@ -107,21 +107,10 @@ namespace acg_dotnet
             }            
             
         }
+            
 
-        private Brush PhongShadingBrush(double[] a, double[] b, double[] c, double[] p) {
-            int R = 0;
-            int G = 255;
-            int B = 0;
-
-            double[] bar = TransformationMatrices.GetBarycentricCoordinates(a, b, c, p);
-            double[] normal = TransformationMatrices.AddArrays(
-                    TransformationMatrices.ArrayOnNumberProduct(a, bar[0]),
-                    TransformationMatrices.AddArrays(
-                        TransformationMatrices.ArrayOnNumberProduct(b, bar[1]),
-                        TransformationMatrices.ArrayOnNumberProduct(c, bar[2])
-                    )
-                );
-
+        private Brush PhongLighting(double[] a, double[] b, double[] c, double[] p) {
+            double[] normal = TransformationMatrices.GetNormal(a, b, c, p);
             double[] light = new double[] {
                 Constants.REVERSE_LIGHT_VIEWPORT_NORM[0],
                 Constants.REVERSE_LIGHT_VIEWPORT_NORM[1],
@@ -129,20 +118,87 @@ namespace acg_dotnet
             };
 
             light = TransformationMatrices.NormalizeArray(TransformationMatrices.SubstractArrays(p, light));
-            normal = TransformationMatrices.NormalizeArray(normal);
+            light = TransformationMatrices.ArrayOnNumberProduct(light, -1);
+
+            double[] I_ambient = AmbientLighting();
+            double[] I_diffuse = DiffuseLighting(normal, light);
+            double[] I_specular = SpecularLighting(normal, light);
+
+            double[] I_result = new double[] {
+                I_ambient[0] + I_diffuse[0],
+                I_ambient[1] + I_diffuse[1],
+                I_ambient[2] + I_diffuse[2]
+            };
+
+            for (int i = 0; i < I_result.Length; i++) {
+                if (I_result[i] > 255) {
+                    I_result[i] = 255;
+                }
+            }
+
+            Color color = Color.FromArgb(
+                Convert.ToInt32(Math.Round(I_result[0])),
+                Convert.ToInt32(Math.Round(I_result[1])),
+                Convert.ToInt32(Math.Round(I_result[2]))
+            ); 
+            return new SolidBrush(color);
+        }
+
+        private double[] AmbientLighting(double k_r = 0.1, double k_g = 0.1, double k_b = 0.1) {
+            int R = 0;
+            int G = 255;
+            int B = 0;
+
+            return new double[] {
+                R * k_r,
+                G * k_g,
+                B * k_b
+            }; 
+        }
+
+        private double[] DiffuseLighting(double[] normal, double[] light, double k = 0.8) {
+            int R = 0;
+            int G = 255;
+            int B = 0;
+
+            /*double[] bar = TransformationMatrices.GetBarycentricCoordinates(a, b, c, p);
+            double[] normal = TransformationMatrices.AddArrays(
+                    TransformationMatrices.ArrayOnNumberProduct(a, bar[0]),
+                    TransformationMatrices.AddArrays(
+                        TransformationMatrices.ArrayOnNumberProduct(b, bar[1]),
+                        TransformationMatrices.ArrayOnNumberProduct(c, bar[2])
+                    )
+                );
+            normal = TransformationMatrices.NormalizeArray(normal);*/            
+            
             double cos = TransformationMatrices.ArraysScalarProduct(
                 normal,
-                TransformationMatrices.ArrayOnNumberProduct(light, -1)
+                light
             );
 
             cos = cos < 0 ? 0 : cos;
-            Color color = Color.FromArgb(
+            /*Color color = Color.FromArgb(
                 Convert.ToInt32(Math.Round(R * cos)),
                 Convert.ToInt32(Math.Round(G * cos)),
                 Convert.ToInt32(Math.Round(B * cos))
-            );
-            return new SolidBrush(color);
+            );*/
+            //return new SolidBrush(color);
+            return new double[] {
+                R * cos * k,
+                G * cos * k,
+                B * cos * k
+            };
+        }
 
+        private double[] SpecularLighting(double[] normal, double[] light) {
+            double[] r = TransformationMatrices.SubstractArrays(
+                    light,
+                    TransformationMatrices.ArrayOnNumberProduct(
+                            normal,
+                            2*TransformationMatrices.ArraysScalarProduct(light, normal)
+                        )
+                );            
+            return new double[] { };
         }
 
         private Brush GetBrush(double[] v1, double[] v2, double[] v3, double[] vn1, double[] vn2, double[] vn3) {
@@ -247,7 +303,7 @@ namespace acg_dotnet
             return true;
         }
 
-        private void FillPolygon(PaintEventArgs pea, Brush brush,
+        private void FillPolygon(PaintEventArgs pea, 
             int x0, int y0, double z0, int x1, int y1, double z1, int x2, int y2, double z2) {
 
             double[] a = new double[] { x0, y0, z0 };
@@ -338,7 +394,7 @@ namespace acg_dotnet
                     
                     if (Pz < zBuffer[j, y0 + i]) {                        
                         zBuffer[j, y0 + i] = Pz;
-                        //Brush brush = PhongShadingBrush(a, b, c, new double[] { j, y0 + i, Pz });
+                        Brush brush = PhongLighting(a, b, c, new double[] { j, y0 + i, Pz });
                         pea.Graphics.FillRectangle(brush, j, y0 + i, 1, 1);
                     }                    
                 }

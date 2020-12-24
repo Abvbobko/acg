@@ -29,6 +29,18 @@ namespace acg_dotnet.Tools.Transformations
             });
         }
 
+        public static double[] GetNormal(double[] a, double[] b, double[] c, double[] p) {
+            double[] bar = GetBarycentricCoordinates(a, b, c, p);
+            double[] normal = AddArrays(
+                    ArrayOnNumberProduct(a, bar[0]),
+                    AddArrays(
+                        ArrayOnNumberProduct(b, bar[1]),
+                        ArrayOnNumberProduct(c, bar[2])
+                    )
+                );
+            return NormalizeArray(normal);
+        }
+
         public static double[,] ListToArray<T>(List<List<double>> vertex_list) {
             double[,] vertices_matrix = new double[vertex_list.Count, vertex_list[0].Count];
             for (int i = 0; i < vertex_list.Count; i++) {
