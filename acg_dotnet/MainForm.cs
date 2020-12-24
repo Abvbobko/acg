@@ -112,22 +112,32 @@ namespace acg_dotnet
         private Brush PhongLighting(double[] a, double[] b, double[] c, double[] p) {
             double[] normal = TransformationMatrices.GetNormal(a, b, c, p);
             double[] light = new double[] {
-                Constants.REVERSE_LIGHT_VIEWPORT_NORM[0],
-                Constants.REVERSE_LIGHT_VIEWPORT_NORM[1],
-                Constants.REVERSE_LIGHT_VIEWPORT_NORM[2]
+                Constants.LIGHT_VIEWPORT[0],
+                Constants.LIGHT_VIEWPORT[1],
+                Constants.LIGHT_VIEWPORT[2]
             };
 
             light = TransformationMatrices.NormalizeArray(TransformationMatrices.SubstractArrays(p, light));
             light = TransformationMatrices.ArrayOnNumberProduct(light, -1);
 
+            double[] eye = new double[] {
+                Constants.EYE_VIEWPORT[0],
+                Constants.EYE_VIEWPORT[1],
+                Constants.EYE_VIEWPORT[2]
+            };
+
+            eye = TransformationMatrices.NormalizeArray(TransformationMatrices.SubstractArrays(p, eye));
+            //eye = TransformationMatrices.ArrayOnNumberProduct(eye, -1);
+
+
             double[] I_ambient = AmbientLighting();
             double[] I_diffuse = DiffuseLighting(normal, light);
-            double[] I_specular = SpecularLighting(normal, light);
+            double[] I_specular = SpecularLighting(normal, light, eye);
 
             double[] I_result = new double[] {
-                I_ambient[0] + I_diffuse[0],
-                I_ambient[1] + I_diffuse[1],
-                I_ambient[2] + I_diffuse[2]
+                I_ambient[0] + I_diffuse[0], // + I_specular[0],
+                I_ambient[1] + I_diffuse[1],// + I_specular[1],
+                I_ambient[2] + I_diffuse[2] //+ I_specular[2]
             };
 
             for (int i = 0; i < I_result.Length; i++) {
@@ -190,15 +200,27 @@ namespace acg_dotnet
             };
         }
 
-        private double[] SpecularLighting(double[] normal, double[] light) {
+        private double[] SpecularLighting(double[] normal, double[] light, double[] v) {
+            double k_s = 0.0;
+            int alpha = 0;
+            int R = 0;
+            int G = 255;
+            int B = 0;
+
             double[] r = TransformationMatrices.SubstractArrays(
                     light,
                     TransformationMatrices.ArrayOnNumberProduct(
                             normal,
                             2*TransformationMatrices.ArraysScalarProduct(light, normal)
                         )
-                );            
-            return new double[] { };
+                );
+
+            double coef = Math.Pow(TransformationMatrices.ArraysScalarProduct(r, v), alpha)*k_s;
+            return new double[] {
+                coef * R,
+                coef * G,
+                coef * B
+            };
         }
 
         private Brush GetBrush(double[] v1, double[] v2, double[] v3, double[] vn1, double[] vn2, double[] vn3) {
@@ -207,9 +229,9 @@ namespace acg_dotnet
             int B = 0;
         
             double[] light = new double[] {
-                Constants.REVERSE_LIGHT_VIEWPORT_NORM[0],
-                Constants.REVERSE_LIGHT_VIEWPORT_NORM[1],
-                Constants.REVERSE_LIGHT_VIEWPORT_NORM[2]
+                Constants.LIGHT_VIEWPORT[0],
+                Constants.LIGHT_VIEWPORT[1],
+                Constants.LIGHT_VIEWPORT[2]
             };
 
             double[] light_v1 = TransformationMatrices.NormalizeArray(TransformationMatrices.SubstractArrays(v1, light));
