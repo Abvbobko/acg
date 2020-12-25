@@ -53,9 +53,7 @@ namespace acg_dotnet
             List<List<int>> faces = model.FacesV;
             List<List<int>> faces_vn = model.FacesVn;
 
-            zBuffer = new ZBuffer(Size.Width, Size.Height);
-
-            //int face_index = 0;
+            zBuffer = new ZBuffer(Size.Width, Size.Height);            
             
             foreach (int index in indexes) {
                 List<double[]> polygonPoints = new List<double[]>();

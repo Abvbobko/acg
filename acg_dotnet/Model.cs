@@ -86,10 +86,19 @@ namespace acg_dotnet
         }
 
         public Matrix<double> TransformVerticesNormals() {
-            return TransformCoordinates(vertices_normals);
+            return TransformCoordinates(vertices_normals, true);
         }
 
-        public Matrix<double> TransformCoordinates(Matrix<double> v) {
+        public Matrix<double> TransformCoordinates(Matrix<double> v, bool to_view=false) {
+            if (to_view) {
+
+                // can delete moving and scale matrix
+                return Constants.W_TO_O.Multiply(moving_matrix
+                    ).Multiply(rotate_matrix
+                    ).Multiply(scale_matrix
+                    ).Multiply(v);
+            }
+
             if (projection_type) {
                 return Constants.W_TO_V.Multiply(moving_matrix
                     ).Multiply(rotate_matrix
