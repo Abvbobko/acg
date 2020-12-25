@@ -9,6 +9,8 @@ namespace acg_dotnet.Tools
 {
     static class Lighting
     {
+
+        private static int cnt = 0;
         public static Brush PhongLighting(double[] a, double[] b, double[] c, double[] p, double[] v1, double[] v2, double[] v3) {
             double[] normal = VectorOperations.InterpolateNormal(a, b, c, p, v1, v2, v3);
             double[] light = new double[] {
@@ -16,16 +18,21 @@ namespace acg_dotnet.Tools
                 Constants.LIGHT_VIEWPORT[1],
                 Constants.LIGHT_VIEWPORT[2]
             };
-
-            light = VectorOperations.NormalizeArray(VectorOperations.SubstractArrays(p, light));
+           
+            light = VectorOperations.SubstractArrays(p, light);            
+            light = VectorOperations.NormalizeArray(light);
             light = VectorOperations.ArrayOnNumberProduct(light, -1);
-
+            
             double[] eye = new double[] {
                 Constants.EYE_VIEWPORT[0],
                 Constants.EYE_VIEWPORT[1],
                 Constants.EYE_VIEWPORT[2]
             };
 
+            if (cnt == 0) {
+                Console.WriteLine(eye[0] + " " + eye[1] + " " + eye[2]);
+                cnt += 1;
+            }
             eye = VectorOperations.NormalizeArray(VectorOperations.SubstractArrays(p, eye));
             //eye = VectorOperations.ArrayOnNumberProduct(eye, -1);
 
@@ -91,6 +98,9 @@ namespace acg_dotnet.Tools
                             2 * VectorOperations.ArraysScalarProduct(light, normal)
                         )
                 );
+
+            r = VectorOperations.NormalizeArray(r);
+            v = VectorOperations.NormalizeArray(v);
 
             double coef = k * Math.Pow(VectorOperations.ArraysScalarProduct(r, v), alpha);
             return new double[] {
