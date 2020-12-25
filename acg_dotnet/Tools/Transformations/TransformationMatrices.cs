@@ -5,19 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
+using acg_dotnet.Tools;
 
 namespace acg_dotnet.Tools.Transformations
 {
-    /*struct Point
-    {
-        public double x, y, z;
-        public Point(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    }*/
-
+    
     static class TransformationMatrices {
 
         public static Matrix<double> GetEye4() {
@@ -27,19 +19,7 @@ namespace acg_dotnet.Tools.Transformations
                 { 0, 0, 1, 0 },
                 { 0, 0, 0, 1 }
             });
-        }
-
-        public static double[] GetNormal(double[] a, double[] b, double[] c, double[] p) {
-            double[] bar = GetBarycentricCoordinates(a, b, c, p);
-            double[] normal = AddArrays(
-                    ArrayOnNumberProduct(a, bar[0]),
-                    AddArrays(
-                        ArrayOnNumberProduct(b, bar[1]),
-                        ArrayOnNumberProduct(c, bar[2])
-                    )
-                );
-            return NormalizeArray(normal);
-        }
+        }      
 
         public static double[,] ListToArray<T>(List<List<double>> vertex_list) {
             double[,] vertices_matrix = new double[vertex_list.Count, vertex_list[0].Count];
@@ -179,127 +159,7 @@ namespace acg_dotnet.Tools.Transformations
 
         // world to observer        
 
-        public static double[] NormalizeArray(double[] vector) {
-            double sqr_sum = 0;
-            for (int i = 0; i < vector.Length; i++) {
-                sqr_sum += vector[i] * vector[i];
-            }
-            sqr_sum = Math.Sqrt(sqr_sum);
-            for (int i = 0; i < vector.Length; i++) {
-                vector[i] /= sqr_sum * 1.0;
-            }
-            return vector;
-        }
-
-        public static double[] SubstractArrays(double[] a, double[] b) {
-            if (a.Length != b.Length) {
-                throw new Exception("a and b must be the same length.");
-            }
-
-            double[] c = new double[a.Length];
-            for (int i = 0; i < a.Length; i++) {
-                c[i] = a[i] - b[i];
-            }
-
-            return c;
-        }
-
-        public static double[] AddArrays(double[] a, double[] b) {
-            if (a.Length != b.Length) {
-                throw new Exception("a and b must be the same length.");
-            }
-
-            double[] c = new double[a.Length];
-            for (int i = 0; i < a.Length; i++) {
-                c[i] = a[i] + b[i];
-            }
-
-            return c;
-        }
-
-        public static double[] Arrays3CrossProduct(double[] a, double[] b) {
-            return new double[] {
-                a[1]*b[2] - a[2]*b[1],
-                - (a[0]*b[2] - a[2]*b[0]),
-                a[0]*b[1] - a[1]*b[0]
-            };
-        }
-
-        public static double ArraysScalarProduct(double[] a, double[] b) {
-            double result = 0;
-            for (int i = 0; i < a.Length; i++) {
-                result += a[i] * b[i];
-            }
-            return result;
-        }
-
-        public static double[] ArrayOnNumberProduct(double[] a, double coef) {
-            double[] result = new double[a.Length];
-            for (int i = 0; i < a.Length; i++) {
-                result[i] = a[i] * coef;
-            }
-            return result;
-        }
-
-        public static double[] GetBarycentricCoordinates(double[] a, double[] b, double[] c, double[] p) {
-
-            /*double abc, cap, abp, bcp;
-
-            abc = GetTriangleArea(a, b, c);
-            cap = GetTriangleArea(c, a, p);
-            abp = GetTriangleArea(a, b, p);
-            bcp = GetTriangleArea(b, c, p);
-            
-            double[] bar = new double[] {
-                bcp / abc,
-                cap / abc,
-                abp / abc
-            };*/
-            
-
-            double[] ab, ac, pa;
-            ab = SubstractArrays(b, a);
-            
-            ac = SubstractArrays(c, a);            
-
-            pa = SubstractArrays(a, p);            
-
-            double[] sx = new double[] { ab[0], ac[0], pa[0] };
-            sx = ArrayOnNumberProduct(sx, -1);            
-
-            double[] sy = new double[] { ab[1], ac[1], pa[1] };            
-
-            double[] u = Arrays3CrossProduct(sx, sy);            
-
-            double[] bar = new double[] {
-                1 - (u[0] + u[1])/u[2],
-                u[1]/u[2],
-                u[0]/u[2]
-            };
-
-
-            bool print = false;
-            if (print) {
-                Console.WriteLine("a " + a[0] + " " + a[1] + " " + a[2]);
-                Console.WriteLine("b " + b[0] + " " + b[1] + " " + b[2]);
-                Console.WriteLine("c " + c[0] + " " + c[1] + " " + c[2]);
-                Console.WriteLine("p " + p[0] + " " + p[1] + " " + p[2]);
-
-                Console.WriteLine("ab " + ab[0] + " " + ab[1] + " " + ab[2]);
-                Console.WriteLine("ac " + ac[0] + " " + ac[1] + " " + ac[2]);
-                Console.WriteLine("pa " + pa[0] + " " + pa[1] + " " + pa[2]);
-                Console.WriteLine("sx "+  sx[0] + " " + sx[1] + " " + sx[2]);
-                Console.WriteLine("sy " + sy[0] + " " + sy[1] + " " + sy[2]);
-                Console.WriteLine("u " + u[0] + " " + u[1] + " " + u[2]);
-            }
-
-            //Console.WriteLine(bar[0] + " " + bar[1] + " " + bar[2]);
-            return bar;
-        }
-
-        private static double GetTriangleArea(double[] a, double[] b, double[] c) {
-            return ArraysScalarProduct(SubstractArrays(b, a), SubstractArrays(c, a));
-        }
+        
 
         public static Matrix<double> WorldToObserver(double[] eye, double[] target, double[] up) {
             /*
@@ -319,8 +179,12 @@ namespace acg_dotnet.Tools.Transformations
 
             Vector<double> v_eye = DenseVector.OfArray(eye);
 
-            Vector<double> z_axis = DenseVector.OfArray(NormalizeArray(SubstractArrays(eye, target)));
-            Vector<double> x_axis = DenseVector.OfArray(NormalizeArray(Arrays3CrossProduct(up, z_axis.ToArray())));
+            Vector<double> z_axis = DenseVector.OfArray(
+                VectorOperations.NormalizeArray(VectorOperations.SubstractArrays(eye, target))
+            );
+            Vector<double> x_axis = DenseVector.OfArray(VectorOperations.NormalizeArray(
+                VectorOperations.Arrays3CrossProduct(up, z_axis.ToArray()))
+            );
             Vector<double> y_axis = DenseVector.OfArray(up);
             
             return TransformMatrix(

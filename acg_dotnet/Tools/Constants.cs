@@ -75,12 +75,7 @@ namespace acg_dotnet.Tools
         public static Matrix<double> W_TO_P_perspective = O_TO_P_PERSPECTIVE.Multiply(W_TO_O);
 
         public static readonly double[] LIGHT = { WIN_WIDTH, Convert.ToInt32(WIN_HEIGHT/2), -30, 1 };
-        public static readonly double[] LIGHT_VIEWPORT =// TransformationMatrices.NormalizeArray(
-                                                                     //TransformationMatrices.ArrayOnNumberProduct(
-                W_TO_V.Multiply(DenseVector.OfArray(LIGHT)).AsArray();//, 
-                                                                      //-1
-                                                                      // )
-                                                                      //);
+        public static readonly double[] LIGHT_VIEWPORT = W_TO_V.Multiply(DenseVector.OfArray(LIGHT)).AsArray();
 
         public static readonly double[] EYE_VIEWPORT = W_TO_V.Multiply(DenseVector.OfArray(
                 new double[] { EYE[0], EYE[1] , EYE[2] , 1}
@@ -102,5 +97,16 @@ namespace acg_dotnet.Tools
 
         public const double FOV = Math.PI / 4;
         public const double ASPECT = (double)WIN_WIDTH / WIN_HEIGHT;
+
+
+        public static readonly int[] RGB = new int[] { 0, 255, 0};
+        public static readonly int[] RGB_a = RGB;
+        public static readonly int[] RGB_d = RGB;
+        public static readonly int[] RGB_s = RGB;
+
+        public const double k_a = 0.1;
+        public const double k_d = 0.8;
+        public const double k_s = 0.5;
+        public const int alpha = 64;
     }
 }
