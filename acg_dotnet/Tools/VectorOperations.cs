@@ -16,8 +16,8 @@ namespace acg_dotnet.Tools
             double[] normal = AddArrays(
                     ArrayOnNumberProduct(v1, bar[0]),
                     AddArrays(
-                        ArrayOnNumberProduct(v2, bar[1]),
-                        ArrayOnNumberProduct(v3, bar[2])
+                        ArrayOnNumberProduct(v2, bar[2]),
+                        ArrayOnNumberProduct(v3, bar[1])
                     )
                 );
             return NormalizeArray(normal);
