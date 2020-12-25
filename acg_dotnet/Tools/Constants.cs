@@ -74,7 +74,7 @@ namespace acg_dotnet.Tools
 
         public static Matrix<double> W_TO_P_perspective = O_TO_P_PERSPECTIVE.Multiply(W_TO_O);
 
-        public static readonly double[] LIGHT = { WIN_WIDTH, Convert.ToInt32(WIN_HEIGHT/2), -30, 1 };
+        public static readonly double[] LIGHT = { WIN_WIDTH, WIN_HEIGHT, 30, 1 };
         public static readonly double[] LIGHT_VIEWPORT = W_TO_V.Multiply(DenseVector.OfArray(LIGHT)).AsArray();
 
         public static readonly double[] EYE_VIEWPORT = W_TO_V.Multiply(DenseVector.OfArray(
@@ -107,6 +107,6 @@ namespace acg_dotnet.Tools
         public const double k_a = 0.1;
         public const double k_d = 0.8;
         public const double k_s = 0.5;
-        public const int alpha = 64;
+        public const int alpha = 256;
     }
 }

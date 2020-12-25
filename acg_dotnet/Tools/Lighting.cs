@@ -9,8 +9,8 @@ namespace acg_dotnet.Tools
 {
     static class Lighting
     {
-        public static Brush PhongLighting(double[] a, double[] b, double[] c, double[] p) {
-            double[] normal = VectorOperations.InterpolateNormal(a, b, c, p);
+        public static Brush PhongLighting(double[] a, double[] b, double[] c, double[] p, double[] v1, double[] v2, double[] v3) {
+            double[] normal = VectorOperations.InterpolateNormal(a, b, c, p, v1, v2, v3);
             double[] light = new double[] {
                 Constants.LIGHT_VIEWPORT[0],
                 Constants.LIGHT_VIEWPORT[1],
@@ -27,7 +27,7 @@ namespace acg_dotnet.Tools
             };
 
             eye = VectorOperations.NormalizeArray(VectorOperations.SubstractArrays(p, eye));
-            //eye = TransformationMatrices.ArrayOnNumberProduct(eye, -1);
+            //eye = VectorOperations.ArrayOnNumberProduct(eye, -1);
 
 
             double[] I_ambient = AmbientLighting(Constants.RGB_a);
@@ -43,6 +43,9 @@ namespace acg_dotnet.Tools
             for (int i = 0; i < I_result.Length; i++) {
                 if (I_result[i] > 255) {
                     I_result[i] = 255;
+                }
+                else if (I_result[i] < 0) {
+                    I_result[i] = 0;
                 }
             }
 

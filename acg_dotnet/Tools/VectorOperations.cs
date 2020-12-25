@@ -10,13 +10,14 @@ namespace acg_dotnet.Tools
 {
     static class VectorOperations
     {
-        public static double[] InterpolateNormal(double[] a, double[] b, double[] c, double[] p) {
+        public static double[] InterpolateNormal(double[] a, double[] b, double[] c, double[] p, 
+            double[] v1, double[] v2, double[] v3) {
             double[] bar = GetBarycentricCoordinates(a, b, c, p);
             double[] normal = AddArrays(
-                    ArrayOnNumberProduct(a, bar[0]),
+                    ArrayOnNumberProduct(v1, bar[0]),
                     AddArrays(
-                        ArrayOnNumberProduct(b, bar[1]),
-                        ArrayOnNumberProduct(c, bar[2])
+                        ArrayOnNumberProduct(v2, bar[1]),
+                        ArrayOnNumberProduct(v3, bar[2])
                     )
                 );
             return NormalizeArray(normal);

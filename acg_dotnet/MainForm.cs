@@ -102,7 +102,8 @@ namespace acg_dotnet
                     //polygon_brush,
                     Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)), z1_,
                     Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)), z2_,
-                    Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), z3_                
+                    Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), z3_,
+                    vn1, vn2, vn3
                 );                
             }            
             
@@ -112,12 +113,13 @@ namespace acg_dotnet
             return new double[] { b, a };
         }
 
-        private int[] SwapInt(int a, int b) {
+        private int[] Swap(int a, int b) {
             return new int[] { b, a };
         }        
 
         private void FillPolygon(PaintEventArgs pea, 
-            int x0, int y0, double z0, int x1, int y1, double z1, int x2, int y2, double z2) {
+            int x0, int y0, double z0, int x1, int y1, double z1, int x2, int y2, double z2,
+            double[] v1, double[] v2, double[] v3) {
 
             double[] a = new double[] { x0, y0, z0 };
             double[] b = new double[] { x1, y1, z1 };
@@ -129,11 +131,11 @@ namespace acg_dotnet
             
             
             if (y0 > y1) {
-                int[] tmp = SwapInt(y0, y1);
+                int[] tmp = Swap(y0, y1);
                 y0 = tmp[0];
                 y1 = tmp[1];
 
-                tmp = SwapInt(x0, x1);
+                tmp = Swap(x0, x1);
                 x0 = tmp[0];
                 x1 = tmp[1];
 
@@ -144,11 +146,11 @@ namespace acg_dotnet
             }
 
             if (y0 > y2) {
-                int[] tmp = SwapInt(y0, y2);
+                int[] tmp = Swap(y0, y2);
                 y0 = tmp[0];
                 y2 = tmp[1];
 
-                tmp = SwapInt(x0, x2);
+                tmp = Swap(x0, x2);
                 x0 = tmp[0];
                 x2 = tmp[1];
 
@@ -158,11 +160,11 @@ namespace acg_dotnet
             }
 
             if (y1 > y2) {
-                int[] tmp = SwapInt(y1, y2);
+                int[] tmp = Swap(y1, y2);
                 y1 = tmp[0];
                 y2 = tmp[1];
 
-                tmp = SwapInt(x1, x2);
+                tmp = Swap(x1, x2);
                 x1 = tmp[0];
                 x2 = tmp[1];
 
@@ -207,7 +209,7 @@ namespace acg_dotnet
                     
                     if (Pz < zBuffer[j, y0 + i]) {                        
                         zBuffer[j, y0 + i] = Pz;
-                        Brush brush = Lighting.PhongLighting(a, b, c, new double[] { j, y0 + i, Pz });
+                        Brush brush = Lighting.PhongLighting(a, b, c, new double[] { j, y0 + i, Pz }, v1, v2, v3);
                         pea.Graphics.FillRectangle(brush, j, y0 + i, 1, 1);
                     }                    
                 }
