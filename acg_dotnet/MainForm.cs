@@ -47,11 +47,13 @@ namespace acg_dotnet
 
             Matrix<double> vertices = model.TransformVertices();
             Matrix<double> vertices_n = model.TransformVerticesNormals();
+            Matrix<double> vertices_t = model.TransformVerticesTextures();
 
             // возвращать только индексы нужных faces
             List<int> indexes = CoordinateOperations.RejectFaces(model.FacesV, vertices);
             List<List<int>> faces = model.FacesV;
             List<List<int>> faces_vn = model.FacesVn;
+            List<List<int>> faces_vt = model.FacesVt;
 
             zBuffer = new ZBuffer(Size.Width, Size.Height);            
             
@@ -70,6 +72,7 @@ namespace acg_dotnet
                 double x2_ = vertices.At(0, faces[index][1] - 1), y2_ = vertices.At(1, faces[index][1] - 1), z2_ = vertices.At(2, faces[index][1] - 1);
                 double x3_ = vertices.At(0, faces[index][2] - 1), y3_ = vertices.At(1, faces[index][2] - 1), z3_ = vertices.At(2, faces[index][2] - 1);
                 
+                // ----- normals ------
                 double[] vn1 = new double[] {
                     vertices_n.At(0, faces_vn[index][0] - 1),
                     vertices_n.At(1, faces_vn[index][0] - 1),
@@ -88,12 +91,31 @@ namespace acg_dotnet
                     vertices_n.At(2, faces_vn[index][2] - 1)
                 };
 
+
+                // ------ textures ------
+                double[] vt1 = new double[] {
+                    vertices_t.At(0, faces_vt[index][0] - 1),
+                    vertices_t.At(1, faces_vt[index][0] - 1),
+                    vertices_t.At(2, faces_vt[index][0] - 1)
+                };
+
+                double[] vt2 = new double[] {
+                    vertices_t.At(0, faces_vt[index][1] - 1),
+                    vertices_t.At(1, faces_vt[index][1] - 1),
+                    vertices_t.At(2, faces_vt[index][1] - 1)
+                };
+
+                double[] vt3 = new double[] {
+                    vertices_t.At(0, faces_vt[index][2] - 1),
+                    vertices_t.At(1, faces_vt[index][2] - 1),
+                    vertices_t.At(2, faces_vt[index][2] - 1)
+                };
                 /*Brush polygon_brush = GetBrush(
                     new double[] { x1_, y1_, z1_ },
                     new double[] { x2_, y2_, z2_ },
                     new double[] { x3_, y3_, z3_ },
                     vn1, vn2, vn3                    
-                );  */             
+                );  */
 
                 FillPolygon(
                     pea,
@@ -101,7 +123,8 @@ namespace acg_dotnet
                     Convert.ToInt32(Math.Round(x1_)), Convert.ToInt32(Math.Round(y1_)), z1_,
                     Convert.ToInt32(Math.Round(x2_)), Convert.ToInt32(Math.Round(y2_)), z2_,
                     Convert.ToInt32(Math.Round(x3_)), Convert.ToInt32(Math.Round(y3_)), z3_,
-                    vn1, vn2, vn3
+                    vn1, vn2, vn3,
+                    vt1, vt2, vt3
                 );                
             }            
             
@@ -115,9 +138,9 @@ namespace acg_dotnet
             return new int[] { b, a };
         }        
 
-        private void FillPolygon(PaintEventArgs pea, 
+        private void FillPolygon(PaintEventArgs pea,
             int x0, int y0, double z0, int x1, int y1, double z1, int x2, int y2, double z2,
-            double[] v1, double[] v2, double[] v3) {
+            double[] vn1, double[] vn2, double[] vn3, double[] vt1, double[] vt2, double[] vt3) {
 
             double[] a = new double[] { x0, y0, z0 };
             double[] b = new double[] { x1, y1, z1 };
@@ -207,7 +230,9 @@ namespace acg_dotnet
                     
                     if (Pz < zBuffer[j, y0 + i]) {                        
                         zBuffer[j, y0 + i] = Pz;
-                        Brush brush = Lighting.PhongLighting(a, b, c, new double[] { j, y0 + i, Pz }, v1, v2, v3);
+                        Brush brush = Lighting.PhongLighting(
+                            model, a, b, c, new double[] { j, y0 + i, Pz }, vn1, vn2, vn3, vt1, vt2, vt3
+                        );
                         pea.Graphics.FillRectangle(brush, j, y0 + i, 1, 1);
                     }                    
                 }

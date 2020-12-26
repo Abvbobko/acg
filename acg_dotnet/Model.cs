@@ -7,6 +7,7 @@ using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
 using acg_dotnet.Tools.Transformations;
 using acg_dotnet.Tools;
+using System.Drawing;
 
 
 namespace acg_dotnet
@@ -16,9 +17,16 @@ namespace acg_dotnet
         ObjLoader objLoader;
         Matrix<double> vertices;
         Matrix<double> vertices_normals;
+        Matrix<double> vertices_textures;
+
         Matrix<double> moving_matrix;
         Matrix<double> scale_matrix;
         Matrix<double> rotate_matrix;
+
+        private Bitmap diffuse_map;
+        private Bitmap normal_map;
+        private Bitmap specular_map;
+
         bool projection_type = true; // true - ortographic / false - perspective
 
 
@@ -42,6 +50,11 @@ namespace acg_dotnet
             objLoader.Load(path);
             vertices = objLoader.Vertices.Transpose();
             vertices_normals = objLoader.VerticesNormals.Transpose();
+            vertices_textures = objLoader.VerticesTextures.Transpose();
+
+            diffuse_map = objLoader.DiffuseMap;
+            normal_map = objLoader.NormalMap;
+            specular_map = objLoader.SpecularMap;
         }
 
         public void MoveFigure(Point matrix_args) {
@@ -89,6 +102,10 @@ namespace acg_dotnet
             return TransformCoordinates(vertices_normals, true);
         }
 
+        public Matrix<double> TransformVerticesTextures() {
+            return vertices_textures;//TransformCoordinates(vertices_normals, true);
+        }        
+
         public Matrix<double> TransformCoordinates(Matrix<double> v, bool to_view=false) {
             if (to_view) {
 
@@ -130,6 +147,46 @@ namespace acg_dotnet
             get {
                 return objLoader.FacesVn;
             }
+        }
+
+        public List<List<int>> FacesVt {
+            get {
+                return objLoader.FacesVt;
+            }
+        }
+
+        public int[] GetColor(Bitmap map, double x, double y) {
+            y = 1 - y;
+            int new_x = Convert.ToInt32(map.Width * x);
+            int new_y = Convert.ToInt32(map.Height * y);
+            
+            if (new_x < 0) {
+                new_x = 0;
+            }
+            else if (new_x >= map.Width) {
+                new_x = map.Width - 1;
+            }
+
+            if (new_y < 0) {
+                new_y = 0;
+            }
+            else if (new_y >= map.Height) {
+                new_y = map.Height - 1;
+            }
+
+            Color color = map.GetPixel(
+                new_x,
+                new_y
+            );
+            return new int[] { color.R, color.G, color.B };
+        }
+
+        public int[] GetDiffuseColor(double x, double y) {
+            return GetColor(diffuse_map, x, y);
+        }
+
+        public int[] GetNormal(double x, double y) {
+            return GetColor(normal_map, x, y);
         }
     }
 }

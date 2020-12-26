@@ -8,6 +8,7 @@ using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
 using acg_dotnet.Tools.Transformations;
 using System.Globalization;
+using System.Drawing;
 
 namespace acg_dotnet.Tools
 {
@@ -20,6 +21,10 @@ namespace acg_dotnet.Tools
         private List<List<int>> faces_vn = new List<List<int>>();
         private List<List<int>> faces_vt = new List<List<int>>();
 
+        private Bitmap diffuse_map = null;
+        private Bitmap normal_map = null;
+        private Bitmap specular_map = null;
+
         private const String F_SEPARATOR_WITH_MISSING = "//";
         private const char F_SEPARATOR = '/';
 
@@ -31,6 +36,10 @@ namespace acg_dotnet.Tools
             faces_v.Clear();
             faces_vn.Clear();
             faces_vt.Clear();
+
+            diffuse_map = null;
+            normal_map = null;
+            specular_map = null;
         }
         
         public void Load(String path) {
@@ -142,6 +151,9 @@ namespace acg_dotnet.Tools
                 }
                 
             }
+            diffuse_map = ReadPng(Constants.DIFFUSE_MAP_PATH);
+            normal_map = ReadPng(Constants.NORMAL_MAP_PATH);
+            specular_map = ReadPng(Constants.SPECULAR_MAP_PATH);
                    
         }
 
@@ -181,5 +193,27 @@ namespace acg_dotnet.Tools
             }
         }
 
+        private Bitmap ReadPng(string path) {
+            Bitmap bitmap = new Bitmap(path);
+            return bitmap;
+        }        
+
+        public Bitmap DiffuseMap {
+            get {
+                return diffuse_map;
+            }
+        }
+
+        public Bitmap NormalMap {
+            get {
+                return normal_map;
+            }
+        }
+
+        public Bitmap SpecularMap {
+            get {
+                return specular_map;
+            }
+        }
     }
 }

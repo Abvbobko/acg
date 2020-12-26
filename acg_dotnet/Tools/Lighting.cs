@@ -11,8 +11,12 @@ namespace acg_dotnet.Tools
     {
 
         private static int cnt = 0;
-        public static Brush PhongLighting(double[] a, double[] b, double[] c, double[] p, double[] v1, double[] v2, double[] v3) {
-            double[] normal = VectorOperations.InterpolateNormal(a, b, c, p, v1, v2, v3);
+        public static Brush PhongLighting(Model model, double[] a, double[] b, double[] c, double[] p, 
+            double[] vn1, double[] vn2, double[] vn3, double[] vt1, double[] vt2, double[] vt3) {
+
+            double[] texture = VectorOperations.InterpolateNormal(a, b, c, p, vt1, vt2, vt3);
+
+            double[] normal = VectorOperations.NormalizeArray(VectorOperations.InterpolateNormal(a, b, c, p, vn1, vn2, vn3));
             double[] light = new double[] {
                 Constants.LIGHT_VIEWPORT[0],
                 Constants.LIGHT_VIEWPORT[1],
@@ -30,16 +34,16 @@ namespace acg_dotnet.Tools
             };
 
             if (cnt == 0) {
-                Console.WriteLine(eye[0] + " " + eye[1] + " " + eye[2]);
+                //Console.WriteLine(eye[0] + " " + eye[1] + " " + eye[2]);
                 cnt += 1;
             }
             eye = VectorOperations.NormalizeArray(VectorOperations.SubstractArrays(p, eye));
             //eye = VectorOperations.ArrayOnNumberProduct(eye, -1);
 
-
-            double[] I_ambient = AmbientLighting(Constants.RGB_a);
-            double[] I_diffuse = DiffuseLighting(Constants.RGB_d, normal, light);
-            double[] I_specular = SpecularLighting(Constants.RGB_s, normal, light, eye);
+            int[] RGB = model.GetDiffuseColor(texture[0], texture[1]);          
+            double[] I_ambient = AmbientLighting(RGB);
+            double[] I_diffuse = DiffuseLighting(RGB, normal, light);
+            double[] I_specular = SpecularLighting(RGB, normal, light, eye);
 
             double[] I_result = new double[] {
                 I_ambient[0] + I_diffuse[0] + I_specular[0],

@@ -21,6 +21,10 @@ namespace acg_dotnet.Tools
 
 
         public const string DEFAULT_PATH = "C:\\Users\\hp\\Desktop\\acg_dotnet\\acg_dotnet\\data\\head\\Model.obj";
+        public const string DIFFUSE_MAP_PATH = "C:\\Users\\hp\\Desktop\\acg_dotnet\\acg_dotnet\\data\\head\\Albedo Map.png";
+        public const string NORMAL_MAP_PATH = "C:\\Users\\hp\\Desktop\\acg_dotnet\\acg_dotnet\\data\\head\\Normal Map.png";
+        public const string SPECULAR_MAP_PATH = "C:\\Users\\hp\\Desktop\\acg_dotnet\\acg_dotnet\\data\\head\\Specular Map.png";
+
         public const int WIN_WIDTH = 800;
         public const int WIN_HEIGHT = 600;
 

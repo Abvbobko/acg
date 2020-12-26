@@ -20,8 +20,8 @@ namespace acg_dotnet.Tools
                         ArrayOnNumberProduct(v3, bar[1])
                     )
                 );
-            return NormalizeArray(normal);
-        }
+            return normal;
+        }        
 
         public static double[] NormalizeArray(double[] vector) {
             double sqr_sum = 0;
@@ -71,7 +71,7 @@ namespace acg_dotnet.Tools
 
         public static double ArraysScalarProduct(double[] a, double[] b) {
             double result = 0;
-            for (int i = 0; i < a.Length; i++) {
+            for (int i = 0; i < a.Length; i++) {                
                 result += a[i] * b[i];
             }
             return result;
