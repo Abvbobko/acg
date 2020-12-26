@@ -97,9 +97,13 @@ namespace acg_dotnet
         public Matrix<double> TransformVertices() {
             return TransformCoordinates(vertices);
         }
-
+    
         public Matrix<double> TransformVerticesNormals() {
             return TransformCoordinates(vertices_normals, true);
+        }
+
+        public Matrix<double> TransformNormal(Vector<double> normal) {
+            return TransformCoordinates(DenseMatrix.OfColumnVectors(normal), true);
         }
 
         public Matrix<double> TransformVerticesTextures() {
@@ -185,8 +189,26 @@ namespace acg_dotnet
             return GetColor(diffuse_map, x, y);
         }
 
-        public int[] GetNormal(double x, double y) {
-            return GetColor(normal_map, x, y);
+        public double[] GetNormal(double x, double y) {
+            int[] rgb = GetColor(normal_map, x, y);
+            double[] normal = new double[rgb.Length+1];
+            for (int i = 0; i < rgb.Length; i++) {
+                normal[i] = (rgb[i] / 255.0) * 2 - 1;
+            }
+            normal[normal.Length - 1] = 1;
+            //normal = VectorOperations.NormalizeArray(normal);    
+            //int tmp = TransformNormal(DenseMatrix.OfColumnVectors(DenseVector.OfArray(normal))).AsArray().Length;
+            //Console.WriteLine(tmp);            
+            Matrix<double> tmp = TransformNormal(DenseVector.OfArray(normal));
+            //Console.WriteLine(tmp.RowCount);
+            //Console.WriteLine(tmp.ColumnCount);
+
+            normal = new double[tmp.RowCount - 1];
+            for (int i = 0; i < tmp.RowCount-1; i++) {
+                normal[i] = tmp[i, 0];
+            }            
+            return normal;
+            //return GetColor(normal_map, x, y);
         }
     }
 }

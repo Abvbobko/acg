@@ -70,8 +70,8 @@ namespace acg_dotnet.Tools
         }
 
         public static double ArraysScalarProduct(double[] a, double[] b) {
-            double result = 0;
-            for (int i = 0; i < a.Length; i++) {                
+            double result = 0;           
+            for (int i = 0; i < a.Length; i++) {                   
                 result += a[i] * b[i];
             }
             return result;

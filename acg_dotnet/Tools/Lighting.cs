@@ -16,7 +16,9 @@ namespace acg_dotnet.Tools
 
             double[] texture = VectorOperations.InterpolateNormal(a, b, c, p, vt1, vt2, vt3);
 
-            double[] normal = VectorOperations.NormalizeArray(VectorOperations.InterpolateNormal(a, b, c, p, vn1, vn2, vn3));
+            double[] normal = VectorOperations.NormalizeArray(model.GetNormal(texture[0], texture[1]));
+           // Console.WriteLine("normal length: " + normal.Length);
+            //double[] normal = VectorOperations.NormalizeArray(VectorOperations.InterpolateNormal(a, b, c, p, vn1, vn2, vn3));
             double[] light = new double[] {
                 Constants.LIGHT_VIEWPORT[0],
                 Constants.LIGHT_VIEWPORT[1],
@@ -77,7 +79,7 @@ namespace acg_dotnet.Tools
         }
 
         private static double[] DiffuseLighting(int[] RGB, double[] normal, double[] light, double k = Constants.k_d) {
-
+            //Console.WriteLine("Check 1");
             double cos = VectorOperations.ArraysScalarProduct(
                 normal,
                 light
@@ -94,7 +96,7 @@ namespace acg_dotnet.Tools
 
         private static double[] SpecularLighting(int[] RGB, double[] normal, double[] light, double[] v,
             double k = Constants.k_s, int alpha = Constants.alpha) {
-
+            //Console.WriteLine("Check 2");
             double[] r = VectorOperations.SubstractArrays(
                     light,
                     VectorOperations.ArrayOnNumberProduct(
@@ -105,7 +107,7 @@ namespace acg_dotnet.Tools
 
             r = VectorOperations.NormalizeArray(r);
             v = VectorOperations.NormalizeArray(v);
-
+           // Console.WriteLine("Check 3");
             double coef = k * Math.Pow(VectorOperations.ArraysScalarProduct(r, v), alpha);
             return new double[] {
                 coef * RGB[0],

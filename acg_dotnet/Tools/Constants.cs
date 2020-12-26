@@ -110,7 +110,7 @@ namespace acg_dotnet.Tools
 
         public const double k_a = 0.1;
         public const double k_d = 0.8;
-        public const double k_s = 4;
+        public const double k_s = 2;
         public const int alpha = 64;
     }
 }
