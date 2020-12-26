@@ -27,7 +27,7 @@ namespace acg_dotnet
         private Bitmap normal_map;
         private Bitmap specular_map;
 
-        bool projection_type = true; // true - ortographic / false - perspective
+        bool projection_type = false; // true - ortographic / false - perspective
 
 
         public Model() {
@@ -195,20 +195,18 @@ namespace acg_dotnet
             for (int i = 0; i < rgb.Length; i++) {
                 normal[i] = (rgb[i] / 255.0) * 2 - 1;
             }
-            normal[normal.Length - 1] = 1;
-            //normal = VectorOperations.NormalizeArray(normal);    
-            //int tmp = TransformNormal(DenseMatrix.OfColumnVectors(DenseVector.OfArray(normal))).AsArray().Length;
-            //Console.WriteLine(tmp);            
-            Matrix<double> tmp = TransformNormal(DenseVector.OfArray(normal));
-            //Console.WriteLine(tmp.RowCount);
-            //Console.WriteLine(tmp.ColumnCount);
-
+            normal[normal.Length - 1] = 1;                      
+            Matrix<double> tmp = TransformNormal(DenseVector.OfArray(normal));            
             normal = new double[tmp.RowCount - 1];
             for (int i = 0; i < tmp.RowCount-1; i++) {
                 normal[i] = tmp[i, 0];
             }            
             return normal;
             //return GetColor(normal_map, x, y);
+        }
+
+        public int[] GetSpecularColor(double x, double y) {
+            return GetColor(specular_map, x, y);
         }
     }
 }

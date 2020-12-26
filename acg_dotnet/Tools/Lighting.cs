@@ -42,10 +42,11 @@ namespace acg_dotnet.Tools
             eye = VectorOperations.NormalizeArray(VectorOperations.SubstractArrays(p, eye));
             //eye = VectorOperations.ArrayOnNumberProduct(eye, -1);
 
-            int[] RGB = model.GetDiffuseColor(texture[0], texture[1]);          
-            double[] I_ambient = AmbientLighting(RGB);
-            double[] I_diffuse = DiffuseLighting(RGB, normal, light);
-            double[] I_specular = SpecularLighting(RGB, normal, light, eye);
+            int[] RGB_ad = model.GetDiffuseColor(texture[0], texture[1]);          
+            double[] I_ambient = AmbientLighting(RGB_ad);
+            double[] I_diffuse = DiffuseLighting(RGB_ad, normal, light);
+            int[] RGB_s = model.GetSpecularColor(texture[0], texture[1]);
+            double[] I_specular = SpecularLighting(RGB_s, normal, light, eye);
 
             double[] I_result = new double[] {
                 I_ambient[0] + I_diffuse[0] + I_specular[0],

@@ -54,7 +54,7 @@ namespace acg_dotnet.Tools
 
         public const double ROTATE_SPEED = 0.1;
 
-        public static Matrix<double> INIT_MODEL_TO_WORLD_MATRIX = TransformationMatrices.ScaleMatrix(new Point(200, 200, 200));
+        public static Matrix<double> INIT_MODEL_TO_WORLD_MATRIX = TransformationMatrices.ScaleMatrix(new Point(100, 100, 100));
 
         public const double SCALE_UP_SPEED = 1.2;
         public const double SCALE_DOWN_SPEED = 1.0 / SCALE_UP_SPEED;
@@ -78,7 +78,7 @@ namespace acg_dotnet.Tools
 
         public static Matrix<double> W_TO_P_perspective = O_TO_P_PERSPECTIVE.Multiply(W_TO_O);
 
-        public static readonly double[] LIGHT = new double[] { WIN_WIDTH, 0, -600, 1 };
+        public static readonly double[] LIGHT = new double[] { WIN_WIDTH, 0, -300, 1 };
         public static readonly double[] LIGHT_VIEWPORT = W_TO_O.Multiply(DenseVector.OfArray(LIGHT)).AsArray();
 
         public static readonly double[] EYE_VIEWPORT = W_TO_O.Multiply(DenseVector.OfArray(
@@ -110,7 +110,7 @@ namespace acg_dotnet.Tools
 
         public const double k_a = 0.1;
         public const double k_d = 0.8;
-        public const double k_s = 2;
-        public const int alpha = 64;
+        public const double k_s = 4;
+        public const int alpha = 8;
     }
 }
